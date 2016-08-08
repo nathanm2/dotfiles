@@ -1,0 +1,16 @@
+
+$if mode=emacs
+
+# Delete Key 
+"\e[3~": delete-char
+
+# Up Arrow 
+"\e[A": history-search-backward
+
+# Down Arrow
+"\e[B": history-search-forward
+
+# Ctl-U 
+"\C-u": kill-whole-line 
+$endif 
+

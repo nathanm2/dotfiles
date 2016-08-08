@@ -24,6 +24,7 @@ mk_link ()
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
+#-- Vim Setup --------------------------------------------------------
 backup ${HOME}/.vimrc
 mk_link ${DIR}/vim ${HOME}/.vim
 
@@ -36,3 +37,5 @@ fi
 ## Install Vim bundles:
 vim +BundleInstall +qall
 
+#-- Bash Setup ---------------------------------------------------------
+mk_link ${DIR}/inputrc ${HOME}/.inputrc
