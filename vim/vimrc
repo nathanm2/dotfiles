@@ -1,0 +1,323 @@
+" Debugging Tips ========================================================
+"
+" List your scripts:
+"    :scriptnames
+"
+" Run VIM without any scripts:
+"     $ gvim -u NONE -U NONE
+"
+" Source plugins individually:
+"     :so path/to/script
+"
+":set verbose=15
+":set verbosefile=/tmp/vimrc3.txt
+
+" Setup Vundle =======================================================
+"   Vundle is a package manager for vim
+"
+"  Brief help
+" :PluginList          - list configured plugins
+" :PluginInstall(!)    - install (update) plugins
+" :PluginSearch(!) foo - search (or refresh cache first) for foo
+" :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
+"
+" see :h vundle for more details or wiki for FAQ
+
+:set nocompatible    " Requires VIM (not VI)
+:filetype off    " Re-enabled later.
+
+" Set the runtime path to include Vundle and initialize:
+:set rtp+=~/.vim/bundle/Vundle.vim
+:call vundle#begin()
+
+" Let Vundle manage Vundle, required and must be first:
+:Plugin 'gmarik/Vundle.vim'
+
+" Ctrl-P permits fuzzy searching of file names:
+:Plugin 'ctrlpvim/ctrlp.vim'
+
+" Enable extra JSON support.
+:Plugin 'elzr/vim-json'
+
+" No comments can on the Plugin line.
+
+" All the Vundle plugins must be added before the following line:
+:call vundle#end()
+
+" Enable Vim file type detection.
+"    This will permit 'FileType' autocmd events to trigger.
+"    The 'plugin' option causes the 'ftplugin.vim' to be loaded.
+"    The 'indent' option causes the 'indent.vim' file to be loaded.
+:filetype plugin indent on
+
+" Ctrl-P Configuration ==================================================
+
+" Get project files by using git:
+:let g:ctrlp_user_command=['.git', 'cd %s && git ls-files']
+
+" Enable ctrl-p to use ctags:
+:let g:ctrlp_extensions = ['tag']
+
+" Global Configs ========================================================
+"    Settings for all files.
+
+" Enable highlight search to highlight all the matches:
+:set hlsearch
+
+" Perform incremental searching as the search pattern is entered:
+:set incsearch
+
+" Enable the 'peachpuff' color scheme (one of the default color schemes):
+:colorscheme peachpuff
+
+
+" Enable syntax highlighting.
+"    Note: On debian systems this is automatically set for you in
+"    /usr/share/vim/vimrc.
+"
+"    Note: Setting syntax on will also automatically set filetype on.
+:syntax on
+
+" Copy, Cut, and Paste to the CLIPBOARD buffer (+)
+:noremap <F1> "+y
+:noremap <F2> "+d
+:noremap <F3> "+p
+
+" A character to be pressed before some of the following mappings take effect:
+:let mapleader = "-"
+
+" Upper case the current word by pressing <ctrl-u> (in insert mode) and '-u'
+" in normal mode:
+:inoremap <c-u> <esc>m`wbvwU``a
+:nnoremap <leader>u m`wbvwU``
+:nnoremap <leader>l m`wbvwu``
+
+" Make it easier to edit this file by defining two mappings:
+"   - One to edit the vimrc file.
+"   - One to source the vimrc file.
+:nnoremap <leader>ev :split $MYVIMRC<cr>
+:nnoremap <leader>sv :source $MYVIMRC<cr>
+
+" Force myself to use the jk sequence to exit escape mode.
+:inoremap jk <esc>
+:inoremap <esc> <nop>
+
+" Make it easier to switch between windows by mapping <tab> to <ctrl-w>:
+:nnoremap <tab> <c-w>
+:nnoremap <tab><tab> <c-w><c-w>
+
+" Highlight redundant spaces at the end of a line:
+:nnoremap <leader>w /\s\+$<cr>
+
+" Clear the last search:
+:nnoremap <leader>c :nohlsearch<cr>
+
+" Cause ctrlp (and everything else) to open a vertically split file to the
+" right of the current window:
+:set splitright
+
+
+" By default VIM complains when you try to navigate away from a buffer that
+" has unsaved changes.  We set the following option to avoid this complaint.
+" :set hidden
+
+" Display a visual ruler on the 80 column.  Change the color to 'black' on
+" terminal versions of vim (ctermbg=0), and lightgrey on GUI versions:
+:set colorcolumn=80
+:highlight ColorColumn ctermbg=0 guibg=lightgrey
+
+" Project Configuration ===================================================
+"       To permit different settings for different coding projects.
+
+" HDM Project:
+function! s:HdmConfig(path)
+    if a:path =~ 'src/\(HDM\|hdm\)'
+
+        " Call the defaults:
+        call s:DefaultConfig(a:path)
+
+        return 1
+    endif
+endfunction
+
+" JSON Config:
+function! s:JsonConfig()
+
+    " Copy the indentation of the current line when starting a new one.
+    set autoindent
+
+    " Automatic formatting options (see :help fo-table):
+    "
+    set formatoptions=t
+    set textwidth=78 shiftwidth=2
+    set softtabstop=2 tabstop=8
+    set expandtab
+    set foldmethod=syntax
+endfunction
+
+" Markdown Config:
+function! s:MarkdownConfig()
+
+    " Maximum width of text that is being inserted.  Longer lines will be
+    " broken up.
+    set textwidth=78
+
+    " What character to show wrapped lines of text:
+    set showbreak=>
+
+    " Tells VIM how many columns a tab character counts for:
+    set tabstop=4
+
+    " How many spaces should a <Tab> counts for while editing.
+    set softtabstop=4
+
+    " How many columns to indent code with the reindent operations (<< and >>)
+    " and automatic C-style indentation.
+    set shiftwidth=4
+
+    " Insert spaces when <Tab> is pressed:
+    set expandtab
+
+    set foldcolumn=1
+
+endfunction
+
+" Restructured Text Config:
+function! s:RstConfig()
+
+    " Maximum width of text that is being inserted.  Longer lines will be
+    " broken up.
+    set textwidth=78
+
+    " What character to show wrapped lines of text:
+    set showbreak=>
+
+    " Tells VIM how many columns a tab character counts for:
+    set tabstop=2
+    set softtabstop=2
+
+    " How many columns to indent code with the reindent operations (<< and >>)
+    " and automatic C-style indentation.
+    set shiftwidth=2
+
+    " The fold column shows where a fold exists.
+    set foldcolumn=1
+
+endfunction
+
+" Default Config:
+function! s:DefaultConfig(path)
+
+    " Enable automatic C program indenting:
+    set cindent
+
+    " Controls automatic C indentation:
+    "    :0  - Place case labels on the same indent as the switch.
+    "    (0  - When in unclosed parentheses, line up with next non-white after
+    "          the unclosed parentheses.
+    "    l1  - Always align with the case label instead of the statement after
+    "          it on the same line.
+    "    t0  - Indent a function return type declaration 0 characters from the
+    "          margin.
+    set cinoptions=:0,(0,l1,t0
+
+    " How automatic formatting is done (see :help fo-table):
+    "    c  : Auto-wrap comments using textwidth, inserting the current comment
+    "         leader automatically.
+    "    q  : Allow formatting of comments with gq.
+    set formatoptions=cq
+
+    " Maximum width of text that is being inserted.  Longer lines will be
+    " broken up.
+    set textwidth=80
+
+    " Insure the current window width is the same as the textwidth option:
+    let &winwidth=&textwidth
+
+    " What character to show wrapped lines of text:
+    set showbreak=>
+
+    " Tells VIM how many columns a tab character counts for:
+    set tabstop=4
+
+    " How many columns to indent code with the reindent operations (<< and >>)
+    " and automatic C-style indentation.
+    set shiftwidth=4
+
+    " How many spaces should a <Tab> counts for while editing.
+    "   When expandtab is set, this permits a single 'backspace' to delete
+    "   all the spaces that constitute the expanded tab.
+    set softtabstop=4
+
+    " Insert spaces when <Tab> is pressed:
+    set expandtab
+
+    highlight RedundantSpaces ctermbg=red guibg=red
+    match RedundantSpaces /\s\+$\| \+\ze\t/
+
+
+    " Enable C code completion:
+    set omnifunc=ccomplete#Complete
+
+    return 1
+endfunction
+
+:let g:Configs = [ function("s:HdmConfig"), function("s:DefaultConfig") ]
+
+function! s:ProjectConfigure()
+    let path = expand('%:p')
+    for Fn in g:Configs
+        if Fn(path)
+            break
+        endif
+    endfor
+endfunction
+
+" Invoke ProjectConfigure() for all C/C++ files (and header files):
+" By wrapping it in a group we can insure it gets exactly once for a
+" given file type.  Otherwise, autocmd tend to stack up upon multiple
+" sourcing of the vimrc.
+:augroup filetype_c
+:   autocmd!
+:   autocmd FileType c,cpp,cmake call s:ProjectConfigure()
+:augroup END
+
+" Invoke JsonConfig for all JSON files:
+:augroup filetype_json
+:   autocmd!
+:   autocmd FileType json call s:JsonConfig()
+:augroup END
+
+" Invoke MarkdownConfig for all Markdown files:
+:augroup filetype_markdown
+:   autocmd!
+:   autocmd FileType markdown call s:MarkdownConfig()
+:augroup END
+
+" Invoke RstConfig for all Restructured Text files:
+:augroup filetype_rst
+:   autocmd!
+:   autocmd FileType rst call s:RstConfig()
+:augroup END
+
+
+" Git + Ctags =============================================================
+
+" GitHandle()
+"
+"  This defines a 'vimscript' function that tests if we're inside a git
+"  repository and then adds '.../.git/tags' to the end of the 'tags' option.
+"
+"  Recall that tags are used for things like tag jumping and omni completion.
+function! GitHandle()
+    if system("git rev-parse --is-inside-work-tree") ==? "true\n"
+        let s:res = system("git rev-parse --show-toplevel")
+        let s:res = substitute(s:res, '\n$', '', '')
+        let &tags = &tags . "," . s:res . "/.git/tags"
+    endif
+endfunction
+
+" Call the GitHandle function.
+:call GitHandle()
+
+:set path=$PWD/**
