@@ -25,8 +25,19 @@ mk_link ()
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 #-- Vim Setup --------------------------------------------------------
-backup ${HOME}/.vimrc
+vim_version=$(vim --version | head -1 | cut -d ' ' -f 5)
+
 mk_link ${DIR}/vim ${HOME}/.vim
+
+## Vim 7.4 allows the rc file to located within the .vim directory.
+##
+## We make use of this feature if it's supported by moving any existing .vimrc
+## to a backup file.
+if [ $(bc <<< "${vim_version} < 7.4") = 1 ]; then
+	mk_link ${DIR}/vimrc ${HOME}/.vimrc
+else
+	backup ${HOME}/.vimrc
+fi
 
 ## Install Vundle (Vim's package manager):
 if [ ! -d ${DIR}/vim/bundle/Vundle.vim ]; then

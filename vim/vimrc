@@ -123,8 +123,10 @@
 
 " Display a visual ruler on the 80 column.  Change the color to 'black' on
 " terminal versions of vim (ctermbg=0), and lightgrey on GUI versions:
-:set colorcolumn=80
-:highlight ColorColumn ctermbg=0 guibg=lightgrey
+if exists('+colorcolumn')
+	set colorcolumn=80
+	highlight ColorColumn ctermbg=0 guibg=lightgrey
+endif
 
 " Project Configuration ===================================================
 "       To permit different settings for different coding projects.
