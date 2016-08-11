@@ -98,9 +98,8 @@
 :nnoremap <leader>ev :split $MYVIMRC<cr>
 :nnoremap <leader>sv :source $MYVIMRC<cr>
 
-" Force myself to use the jk sequence to exit escape mode.
+" Make jk a valid escape sequence:
 :inoremap jk <esc>
-:inoremap <esc> <nop>
 
 " Make it easier to switch between windows by mapping <tab> to <ctrl-w>:
 :nnoremap <tab> <c-w>
