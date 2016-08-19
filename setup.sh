@@ -16,6 +16,7 @@ mk_link ()
 {
 	new=$1
 	old=$2
+	# Test if NEW exists and NEW and OLD point to different things.
 	if [ -e "$new" ] && [ ! "$new" -ef "$old" ]; then
 		backup $old
 		( set -x; ln -s $new $old)
@@ -50,3 +51,8 @@ vim +BundleInstall +qall
 
 #-- Bash Setup ---------------------------------------------------------
 mk_link ${DIR}/inputrc ${HOME}/.inputrc
+
+if [ -e ${HOME}/.bashrc ] && ! grep -q bashrc_common.sh ${HOME}/.bashrc; then
+	printf "\n#Commonly used aliases and commands\n" >> ${HOME}/.bashrc
+	printf "source ${DIR}/bashrc_common.sh\n" >> ${HOME}/.bashrc
+fi
