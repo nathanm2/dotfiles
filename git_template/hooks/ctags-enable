@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+dir="`git rev-parse --show-toplevel`/.git/hooks"
+mv $dir/post-checkout.ctags.sample $dir/post-checkout
+mv $dir/post-commit.ctags.sample $dir/post-commit
+mv $dir/post-merge.ctags.sample $dir/post-merge
+mv $dir/post-rewrite.ctags.sample $dir/post-rewrite
+

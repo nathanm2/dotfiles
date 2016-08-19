@@ -56,3 +56,23 @@ if [ -e ${HOME}/.bashrc ] && ! grep -q bashrc_common.sh ${HOME}/.bashrc; then
 	printf "\n#Commonly used aliases and commands\n" >> ${HOME}/.bashrc
 	printf "source ${DIR}/bashrc_common.sh\n" >> ${HOME}/.bashrc
 fi
+
+#-- Git/Ctags ----------------------------------------------------------
+
+# Rebuild ctags every time a git repo is modified via a checkout, merge, rebase # or commit.
+if ! git config --global init.templatedir >/dev/null; then
+	git config --global init.templatedir ${DIR}/git_template
+	git config --global alias.ctags '!.git/hooks/ctags'
+	git config --global alias.ctags-enable '!.git/hooks/ctags-enable'
+	git config --global alias.ctags-disable '!.git/hooks/ctags-disable'
+fi
+
+# Add the 'rclean' alias to recursively clean a repo:
+git config --global alias.rclean '!git clean -fdx && git submodule foreach git clean -fdx'
+
+# Add the 'su' alias to do a submodule update:
+git config --global alias.su 'submodule update'
+
+# Enable 'Reuse Recorded Resolution' globally:
+git config --global rerere.enabled true
+
