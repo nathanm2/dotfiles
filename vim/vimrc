@@ -133,84 +133,12 @@ if exists('+colorcolumn')
 	highlight ColorColumn ctermbg=0 guibg=lightgrey
 endif
 
+" How to display EOL and tab characters when the 'list' option has been
+" enabled:
+set listchars=eol:$,tab:>-
+
 " Project Configuration ===================================================
 "       To permit different settings for different coding projects.
-
-" HDM Project:
-function! s:HdmConfig(path)
-    if a:path =~ 'src/\(HDM\|hdm\)'
-
-        " Call the defaults:
-        call s:DefaultConfig(a:path)
-
-        return 1
-    endif
-endfunction
-
-" JSON Config:
-function! s:JsonConfig()
-
-    " Copy the indentation of the current line when starting a new one.
-    set autoindent
-
-    " Automatic formatting options (see :help fo-table):
-    "
-    set formatoptions=t
-    set textwidth=78 shiftwidth=2
-    set softtabstop=2 tabstop=8
-    set expandtab
-    set foldmethod=syntax
-endfunction
-
-" Markdown Config:
-function! s:MarkdownConfig()
-
-    " Maximum width of text that is being inserted.  Longer lines will be
-    " broken up.
-    set textwidth=78
-
-    " What character to show wrapped lines of text:
-    set showbreak=>
-
-    " Tells VIM how many columns a tab character counts for:
-    set tabstop=4
-
-    " How many spaces should a <Tab> counts for while editing.
-    set softtabstop=4
-
-    " How many columns to indent code with the reindent operations (<< and >>)
-    " and automatic C-style indentation.
-    set shiftwidth=4
-
-    " Insert spaces when <Tab> is pressed:
-    " set expandtab
-
-    set foldcolumn=1
-
-endfunction
-
-" Restructured Text Config:
-function! s:RstConfig()
-
-    " Maximum width of text that is being inserted.  Longer lines will be
-    " broken up.
-    set textwidth=78
-
-    " What character to show wrapped lines of text:
-    set showbreak=>
-
-    " Tells VIM how many columns a tab character counts for:
-    set tabstop=2
-    set softtabstop=2
-
-    " How many columns to indent code with the reindent operations (<< and >>)
-    " and automatic C-style indentation.
-    set shiftwidth=2
-
-    " The fold column shows where a fold exists.
-    set foldcolumn=1
-
-endfunction
 
 " Default Config:
 function! s:DefaultConfig(path)
@@ -262,11 +190,69 @@ function! s:DefaultConfig(path)
     highlight RedundantSpaces ctermbg=red guibg=red
     match RedundantSpaces /\s\+$\| \+\ze\t/
 
-
     " Enable C code completion:
     set omnifunc=ccomplete#Complete
 
     return 1
+endfunction
+
+" HDM Project:
+function! s:HdmConfig(path)
+    if a:path =~ 'src/\(HDM\|hdm\)'
+
+        " Call the defaults:
+        call s:DefaultConfig(a:path)
+
+        return 1
+    endif
+endfunction
+
+" JSON Config:
+function! s:JsonConfig()
+
+    " Copy the indentation of the current line when starting a new one.
+    set autoindent
+
+    " Automatic formatting options (see :help fo-table):
+    "
+    set formatoptions=t
+    set textwidth=78 shiftwidth=2
+    set softtabstop=2 tabstop=8
+    set expandtab
+    set foldmethod=syntax
+endfunction
+
+" Markdown Config:
+function! s:MarkdownConfig()
+
+    " Call the defaults:
+    call s:DefaultConfig("")
+
+    set textwidth=78
+    set foldcolumn=1
+endfunction
+
+" Restructured Text Config:
+function! s:RstConfig()
+
+    " Maximum width of text that is being inserted.  Longer lines will be
+    " broken up.
+    set textwidth=78
+
+    " What character to show wrapped lines of text:
+    set showbreak=>
+
+    " Tells VIM how many columns a tab character counts for:
+    set tabstop=2
+    set softtabstop=2
+
+    " How many columns to indent code with the reindent operations (<< and >>)
+    " and automatic C-style indentation.
+    set shiftwidth=2
+
+    " The fold column shows where a fold exists.
+    set foldcolumn=1
+
 endfunction
 
 :let g:Configs = [ function("s:HdmConfig"), function("s:DefaultConfig") ]
@@ -286,7 +272,7 @@ endfunction
 " sourcing of the vimrc.
 :augroup filetype_c
 :   autocmd!
-:   autocmd FileType c,cpp,cmake call s:ProjectConfigure()
+:   autocmd FileType c,cpp,cmake,bash,sh call s:ProjectConfigure()
 :augroup END
 
 " Invoke JsonConfig for all JSON files:
@@ -306,7 +292,6 @@ endfunction
 :   autocmd!
 :   autocmd FileType rst call s:RstConfig()
 :augroup END
-
 
 " Git + Ctags =============================================================
 
