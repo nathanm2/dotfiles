@@ -272,7 +272,7 @@ endfunction
 " sourcing of the vimrc.
 :augroup filetype_c
 :   autocmd!
-:   autocmd FileType c,cpp,cmake,bash,sh call s:ProjectConfigure()
+:   autocmd FileType c,cpp,cmake,bash,sh,python call s:ProjectConfigure()
 :augroup END
 
 " Invoke JsonConfig for all JSON files:
