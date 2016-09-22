@@ -19,7 +19,7 @@ CONFIGS_DIR=os.path.join(script_dir(), "configs")
 
 def get_configs():
     return {cfg: os.path.join(CONFIGS_DIR,cfg) for cfg in
-            os.listdir(CONFIGS_DIR) if not cfg.startswith('.')}
+            os.listdir(CONFIGS_DIR) if not cfg.startswith(('.','_'))}
 
 
 if __name__ == "__main__":
