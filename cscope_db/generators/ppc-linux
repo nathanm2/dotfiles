@@ -3,10 +3,10 @@
 # A simple script for creating Cscope files for the Linux kernel's PPC code.
 #
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-. ${DIR}/_config_cli.sh
+input=${1:-"${PWD}"}
+output=${2:-"${PWD}/.cscope"}
 
-set -x
+# set -x
 mkdir -p ${output}
 find ${input} \
     -path "${input}/arch/*" ! -path "${input}/arch/powerpc*" -prune -o   \

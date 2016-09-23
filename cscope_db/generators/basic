@@ -1,11 +1,12 @@
 #!/bin/bash
 
+#
 # A simple script for creating cscope cross reference files.
 #
 
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-. ${DIR}/_config_cli.sh
+input=${1:-"${PWD}"}
+output=${2:-"${PWD}/.cscope"}
 
 # set -x
 mkdir -p ${output}
