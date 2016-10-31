@@ -216,7 +216,7 @@ function! s:JsonConfig()
     " Automatic formatting options (see :help fo-table):
     "
     set formatoptions=t
-    set textwidth=78 shiftwidth=2
+    set shiftwidth=2
     set softtabstop=2 tabstop=8
     set expandtab
     set foldmethod=syntax
