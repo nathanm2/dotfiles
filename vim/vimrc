@@ -42,6 +42,12 @@
 " Enable vimwiki for note taking
 :Plugin 'vimwiki/vimwiki'
 
+" Enable plugin for RUST language.
+:Plugin 'rust-lang/rust.vim'
+
+" Enable GO language support.
+:Plugin 'fatih/vim-go'
+
 " No comments can on the Plugin line.
 
 " All the Vundle plugins must be added before the following line:
