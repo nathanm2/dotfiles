@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 
 """
 A utility for managing Cscope databases.
@@ -10,30 +10,30 @@ import os
 import inspect
 
 def script_dir():
-    """ Get the path of THIS script."""
+    """ Return the directory path containing this script."""
     return os.path.dirname(os.path.abspath(inspect.getfile(
         inspect.currentframe())))
 
 CONFIGS_DIR=os.path.join(script_dir(), "generators")
 
 def error(msg):
-    sys.stderr.write("** {}: {}\n".format(__file__, msg))
+    sys.stderr.write("** {}: {}\n".format(os.path.basename(__file__), msg))
 
-def generators():
+def get_generators():
     return {cfg: os.path.join(CONFIGS_DIR,cfg) for cfg in
             os.listdir(CONFIGS_DIR) if not cfg.startswith(('.','_'))}
 
 def list_generators(args):
-    for key in generators().keys():
-        print("  {}".format(key))
+    g = get_generators()
+    if args.generators:
+        try:
+            g = {name:g[name] for name in args.generators}
+        except KeyError as err:
+            error("generator {} not found".format(err))
+            sys.exit(1)
 
-def generator_path(args):
-    path = generators().get(args.generator)
-    if path:
-        print(path)
-    else:
-        error("generator '{}' does not exist".format(args.generator))
-        sys.exit(1)
+    for name,path in g.items():
+        print("  {0:15}  {1}".format(name, path))
 
 # TODO: Take this from the config file:
 DEFAULT_GENERATOR = "basic"
@@ -47,22 +47,14 @@ if __name__ == "__main__":
     parser.set_defaults(func=None)
 
     subparsers = parser.add_subparsers(
-            title="subcommands",
+            title="Subcommands",
             metavar="")
 
-    lg_parser = subparsers.add_parser('list-generators', aliases=['lg'],
-            help="List available Cscope database generator scripts.")
-    lg_parser.set_defaults(func=list_generators)
-
-    gp_parser = subparsers.add_parser('generator-path', aliases=['gp'],
-            help="Display the path to a Cscope generator script.")
-    gp_parser.set_defaults(func=generator_path)
-
-    # Add the generator argument to the following sub-commands:
-    for p in [gp_parser]:
-        p.add_argument("generator", nargs='?',
-                help= "The cscope generator script (Default: %(default)s)",
-                default=DEFAULT_GENERATOR)
+    gen_parser = subparsers.add_parser('list-generators',
+            help="List available Cscope generator scripts.")
+    gen_parser.add_argument("generators", nargs='*',
+            help="Generator name(s)")
+    gen_parser.set_defaults(func=list_generators)
 
     args = parser.parse_args()
 
