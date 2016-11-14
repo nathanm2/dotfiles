@@ -10,6 +10,8 @@ import os
 import inspect
 import ConfigParser
 
+NAME= os.path.basename(__file__)
+
 # Utilities:
 
 def script_dir():
@@ -39,7 +41,7 @@ def create_config(configname):
         config.write(configfile)
 
 def error(msg):
-    sys.stderr.write("** {}: {}\n".format(os.path.basename(__file__), msg))
+    sys.stderr.write("** {}: {}\n".format(NAME, msg))
 
 def get_generators(config):
     gendir = config.get('config', 'generators')
@@ -49,17 +51,20 @@ def get_generators(config):
 def list_op(config, args):
     gens = get_generators(config)
 
+    print("Generators:")
     for name,path in gens.items():
         print("  {0:15}  {1}".format(name, path))
 
 
 if __name__ == "__main__":
 
+    # The default config file:
+    default_config = os.path.join(os.path.expanduser("~"), ".cscope_db",
+            "config")
+
     # Parse the command line args for '-c' first:
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("--config", "-c",
-            default=os.path.join(os.path.expanduser("~"),".cscope_db",
-                "config"))
+    parser.add_argument("--config", "-c", default=default_config)
     (config_arg, args) = parser.parse_known_args()
     configname = config_arg.config
 
@@ -75,16 +80,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.set_defaults(func=list_op)
     parser.add_argument("--config", "-c",
-            help="Configuration file",
-            default=os.path.join(os.path.expanduser("~"),".cscope_db",
-                "config"))
+            help="{}'s configuration file.  Default: {}".\
+                    format(NAME, default_config),
+            default=default_config)
 
     subparsers = parser.add_subparsers(
             title="Subcommands",
             metavar="")
 
     list_parser = subparsers.add_parser('list',
-            help="List generators and instances.")
+            help="List generators and projects.")
+    default_gen = config.get("config", "default")
+    list_parser.add_argument("generator", nargs='?')
     list_parser.set_defaults(func=list_op)
 
     args = parser.parse_args(args)
