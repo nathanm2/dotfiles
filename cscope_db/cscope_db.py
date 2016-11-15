@@ -9,6 +9,8 @@ import sys
 import os
 import inspect
 import ConfigParser
+import json
+import errno
 
 NAME= os.path.basename(__file__)
 
@@ -30,15 +32,40 @@ def ensure_dir(dirname):
 def create_config(configname):
     """ Create a 'config' file with defaults: """
     config = ConfigParser.RawConfigParser()
+    configdir = os.path.dirname(configname)
 
     config.add_section('config')
     generators = os.path.join(script_dir(), "generators")
     config.set('config', 'generators', generators)
     config.set('config', 'default', 'basic')
+    config.set('config', 'dbfile', os.path.join(configdir, "db.json"))
 
-    ensure_dir(os.path.dirname(configname))
+    ensure_dir(configdir)
     with open(configname, 'wb') as configfile:
         config.write(configfile)
+
+def read_db(dbname):
+    """ Read the database from disk. """
+    try:
+        dbfile = open(dbname, 'r')
+        return json.load(dbfile)
+    except IOError as err:
+        if err.errno != errno.ENOENT:
+            raise
+    return {}
+
+def write_db(dbname, db):
+    """ Write the database to disk. """
+    dbdir = os.path.dirname(dbname)
+    ensure_dir(dbdir)
+
+    # Write to a temporary file and then switch things atomically:
+    tmp = os.path.join(dbdir, '.'+os.path.basename(dbname))
+    with open(tmp, 'wb') as tmpfile:
+        json.dump(db, tmpfile, indent=2)
+        tmpfile.flush()
+        os.fsync(tmpfile.fileno())
+    os.rename(tmp, dbname)
 
 def error(msg):
     sys.stderr.write("** {}: {}\n".format(NAME, msg))
@@ -60,6 +87,15 @@ def list_op(config, args):
     for name,path in gens.items():
         print("  {0:15}  {1}".format(name, path))
 
+def init_op(config, args):
+    dbfile = config.get("config", "dbfile")
+    db = read_db(dbfile)
+    entry = {'output': args.output,
+             'generator': args.generator}
+    if args.name:
+        entry['name'] = args.name
+    db[args.root] = entry
+    write_db(dbfile, db)
 
 if __name__ == "__main__":
 
@@ -98,7 +134,7 @@ if __name__ == "__main__":
     # List Sub-command:
     list_parser = subparsers.add_parser('list',
             help="List generators and projects.")
-    list_parser.add_argument("generator")
+    list_parser.add_argument("generator", nargs='?')
     list_parser.set_defaults(func=list_op)
 
     # Init Sub-command:
@@ -106,12 +142,12 @@ if __name__ == "__main__":
             help="Initialize a project.")
     init_parser.add_argument("--name", "-n",
             help="Optional name of the project")
-    init_parser.add_argument("-i", "--input",
+    init_parser.add_argument("-r", "--root",
             help="The root of the source tree. Default: CWD",
             default=os.getcwd())
     init_parser.add_argument("-o", "--output",
-            help="Where to store the output '.cscope' directory. Default: CWD",
-            default=os.getcwd())
+            help="Where to store the output. Default: CWD/.cscope",
+            default=os.path.join(os.getcwd(), '.cscope'))
     init_parser.add_argument("generator", nargs='?', default=default_gen)
     init_parser.set_defaults(func=init_op)
 
