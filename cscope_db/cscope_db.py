@@ -11,6 +11,7 @@ import inspect
 import ConfigParser
 import json
 import errno
+import datetime
 
 NAME= os.path.basename(__file__)
 
@@ -44,8 +45,9 @@ def create_config(configname):
     with open(configname, 'wb') as configfile:
         config.write(configfile)
 
-def read_db(dbname):
+def read_db(config):
     """ Read the database from disk. """
+    dbname = config.get('config', 'dbfile')
     try:
         dbfile = open(dbname, 'r')
         return json.load(dbfile)
@@ -54,8 +56,9 @@ def read_db(dbname):
             raise
     return {}
 
-def write_db(dbname, db):
+def write_db(config, db):
     """ Write the database to disk. """
+    dbname = config.get('config', 'dbfile')
     dbdir = os.path.dirname(dbname)
     ensure_dir(dbdir)
 
@@ -75,27 +78,52 @@ def get_generators(config):
     return {cfg: os.path.join(gendir,cfg) for cfg in
             os.listdir(gendir) if not cfg.startswith(('.','_'))}
 
+def generator_path(config, args):
+    gens = get_generators(config)
+    generator = args.generator
+    if gens.has_key(generator):
+        return gens[generator]
+    else:
+        return None
+
+
 def list_op(config, args):
     gens = get_generators(config)
     if args.generator:
         gens = {k:v for k,v in gens.iteritems() if args.generator == k}
         if not gens:
             error("No such generator: {}".format(args.generator))
-            return
+            return 1
 
     print("Generators:")
     for name,path in gens.items():
         print("  {0:15}  {1}".format(name, path))
+    return 0
 
 def init_op(config, args):
-    dbfile = config.get("config", "dbfile")
-    db = read_db(dbfile)
+    generators = get_generators(config)
+    generator = args.generator
+
+    # Find the appropriate generator script:
+    if generators.has_key(generator):
+        genpath = generators[generator]
+    else:
+        error("No such generator: {}".format(generator))
+        return 1
+
+    # Run the generator:
+    os.system("{} {} {}".format(genpath, args.root, args.output))
+
+    # Update the database:
+    db = read_db(config)
     entry = {'output': args.output,
-             'generator': args.generator}
+             'generator': args.generator,
+             'updated': '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+             }
     if args.name:
         entry['name'] = args.name
     db[args.root] = entry
-    write_db(dbfile, db)
+    write_db(config, db)
 
 if __name__ == "__main__":
 
@@ -121,7 +149,6 @@ if __name__ == "__main__":
 
     # Create sub-parsers to process the remaining commands:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.set_defaults(func=list_op)
     parser.add_argument("--config", "-c",
             help="{}'s configuration file.  Default: {}".\
                     format(NAME, default_config),
