@@ -78,14 +78,16 @@ def get_generators(config):
     return {cfg: os.path.join(gendir,cfg) for cfg in
             os.listdir(gendir) if not cfg.startswith(('.','_'))}
 
-def generator_path(config, args):
-    gens = get_generators(config)
-    generator = args.generator
-    if gens.has_key(generator):
-        return gens[generator]
-    else:
-        return None
-
+def make_name(db, root):
+    """ Create a unique project name. """
+    (head, base) = os.path.split(root)
+    if base not in db.keys():
+        return base
+    while True:
+        idx = 1
+        name = "{}{}".format(base, idx)
+        if name not in db.keys():
+            return name
 
 def list_op(config, args):
     gens = get_generators(config)
@@ -98,6 +100,13 @@ def list_op(config, args):
     print("Generators:")
     for name,path in gens.items():
         print("  {0:15}  {1}".format(name, path))
+
+    print("\nProjects:")
+    db = read_db(config)
+    for name,entry in db.items():
+        print("  {0:15}  {1}".format(name, entry["updated"]))
+        print("      Root: {0}".format(entry["root"]))
+        print("    Output: {0}\n".format(entry["output"]))
     return 0
 
 def init_op(config, args):
@@ -116,14 +125,49 @@ def init_op(config, args):
 
     # Update the database:
     db = read_db(config)
-    entry = {'output': args.output,
-             'generator': args.generator,
-             'updated': '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
-             }
-    if args.name:
-        entry['name'] = args.name
-    db[args.root] = entry
+    project = {'output': args.output,
+               'generator': args.generator,
+               'updated':'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()),
+               'root': args.root
+              }
+
+    # Use the provided project name or create a unique one:
+    name = args.name
+    if name:
+        if name in db.keys():
+            error("Project name already in use: {}".format(name))
+            return 1
+    else:
+        name = make_name(db, args.root)
+    db[name] = project
+
+    # Write the database:
     write_db(config, db)
+    return 0
+
+def clear_op(config, args):
+    db = read_db(config)
+    projectname = args.name
+
+    try:
+        project = db[projectname]
+    except KeyError:
+        error("No project found: {}".format(projectname))
+        return 1
+
+    outputdir = project['output']
+    try:
+        for filename in os.listdir(outputdir):
+            os.remove(os.path.join(outputdir, filename))
+        if os.path.isdir(outputdir):
+            os.removedirs(outputdir)
+    except OSError: pass
+
+    del db[projectname]
+    write_db(config, db)
+
+    return 0
+
 
 if __name__ == "__main__":
 
@@ -177,6 +221,12 @@ if __name__ == "__main__":
             default=os.path.join(os.getcwd(), '.cscope'))
     init_parser.add_argument("generator", nargs='?', default=default_gen)
     init_parser.set_defaults(func=init_op)
+
+    # Clear Sub-command:
+    clear_parser = subparsers.add_parser('clear',
+            help="Remove a project's cscope files.")
+    clear_parser.add_argument("name", nargs='?')
+    clear_parser.set_defaults(func=clear_op)
 
     args = parser.parse_args(args)
 
