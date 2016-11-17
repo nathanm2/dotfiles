@@ -7,6 +7,7 @@ A utility for managing Cscope databases.
 import argparse
 import sys
 import os
+import stat
 import inspect
 import ConfigParser
 import json
@@ -31,7 +32,7 @@ def ensure_dir(dirname):
             raise
 
 def create_config(configname):
-    """ Create a 'config' file with defaults: """
+    """ Create a program 'config' file with suitable defaults: """
     config = ConfigParser.RawConfigParser()
     configdir = os.path.dirname(configname)
 
@@ -46,7 +47,7 @@ def create_config(configname):
         config.write(configfile)
 
 def read_db(config):
-    """ Read the database from disk. """
+    """ Read the database from storage. """
     dbname = config.get('config', 'dbfile')
     try:
         dbfile = open(dbname, 'r')
@@ -57,7 +58,7 @@ def read_db(config):
     return {}
 
 def write_db(config, db):
-    """ Write the database to disk. """
+    """ Write the database to storage. """
     dbname = config.get('config', 'dbfile')
     dbdir = os.path.dirname(dbname)
     ensure_dir(dbdir)
@@ -71,23 +72,41 @@ def write_db(config, db):
     os.rename(tmp, dbname)
 
 def error(msg):
+    """ Display an error message to the standard error stream. """
     sys.stderr.write("** {}: {}\n".format(NAME, msg))
 
 def get_generators(config):
+    """ Get a dict of {'generator name' => 'generator path'} """
     gendir = config.get('config', 'generators')
     return {cfg: os.path.join(gendir,cfg) for cfg in
             os.listdir(gendir) if not cfg.startswith(('.','_'))}
 
-def make_name(db, root):
-    """ Create a unique project name. """
+def generate_project_name(db, root):
+    """ Generate a unique project name based on the source root path. """
     (head, base) = os.path.split(root)
-    if base not in db.keys():
-        return base
+    suffix = ""
+    idx = 0
     while True:
-        idx = 1
-        name = "{}{}".format(base, idx)
+        name = "{}{}".format(base, suffix)
         if name not in db.keys():
             return name
+        idx += 1
+        suffix = str(idx)
+
+def find_project(db, cwd=os.cwd()):
+    """ Find the closest matching project."""
+    result_len = 0
+    result = None
+    cwd_len = len(cwd)
+
+    for projectname,project in db.items():
+        root = project['root']
+        root_len = len(root)
+        if root_len <= cwd_len and cwd.startswith(root):
+            if root_len > result_len:
+                result = projectname
+                result_len = root_len
+    return result
 
 def list_op(config, args):
     gens = get_generators(config)
@@ -104,57 +123,73 @@ def list_op(config, args):
     print("\nProjects:")
     db = read_db(config)
     for name,entry in db.items():
-        print("  {0:15}  {1}".format(name, entry["updated"]))
+        print("  {0:15}  {1:15} {2}".format(name,
+            entry["generator"],
+            entry["updated"]))
         print("      Root: {0}".format(entry["root"]))
         print("    Output: {0}\n".format(entry["output"]))
     return 0
 
+def build_generator_script(genpath, root, output):
+    script = os.path.join(output, "cscope_gen.sh")
+
+    ensure_dir(output)
+    with open(script, 'wb') as sf:
+        sf.write("#!/bin/sh\n")
+        sf.write("{0} {1} {2}".format(genpath, root, output))
+    os.chmod(script, os.stat(script).st_mode | stat.S_IEXEC)
+    return script
+
 def init_op(config, args):
-    generators = get_generators(config)
-    generator = args.generator
+    db = read_db(config)
 
     # Find the appropriate generator script:
+    generators = get_generators(config)
+    generator = args.generator
     if generators.has_key(generator):
         genpath = generators[generator]
     else:
         error("No such generator: {}".format(generator))
         return 1
 
-    # Run the generator:
-    os.system("{} {} {}".format(genpath, args.root, args.output))
+    # Cleanup any old projects with the same output directory.
+    # Check for project name conflicts at the same time.
+    output = os.path.normpath(args.output)
+    for project in db.values():
+        if output == project['output']:
+            rm_project_files(project)
+        elif args.name == project['name']:
+            error("Project name already in use: {}".format(args.name))
+            return 1
+
+    # Build a shell script for invoking the generator:
+    script = build_generator_script(genpath, args.root, output)
+
+    # Run the generator script:
+    os.system(script)
+
+    # Create a unique project name if not provided by the caller:
+    name = args.name or generate_project_name(db, args.root)
 
     # Update the database:
-    db = read_db(config)
-    project = {'output': args.output,
-               'generator': args.generator,
-               'updated':'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()),
-               'root': args.root
+    project = {'name': name,
+               'output': output,
+               'generator': generator,
+               'root': args.root,
+               'updated':'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
               }
-
-    # Use the provided project name or create a unique one:
-    name = args.name
-    if name:
-        if name in db.keys():
-            error("Project name already in use: {}".format(name))
-            return 1
-    else:
-        name = make_name(db, args.root)
     db[name] = project
 
     # Write the database:
     write_db(config, db)
     return 0
 
-def clear_op(config, args):
-    db = read_db(config)
-    projectname = args.name
+def rm_project_files(project):
+    """
+    Cleans all the project files and project directory.
 
-    try:
-        project = db[projectname]
-    except KeyError:
-        error("No project found: {}".format(projectname))
-        return 1
-
+    Note: It does not remove the project from the database.
+    """
     outputdir = project['output']
     try:
         for filename in os.listdir(outputdir):
@@ -163,15 +198,24 @@ def clear_op(config, args):
             os.removedirs(outputdir)
     except OSError: pass
 
-    del db[projectname]
-    write_db(config, db)
+def clear_op(config, args):
+    db = read_db(config)
+    project = find_project(db, args.name)
+    if project:
+        # Remove the project files and remove it's entry from the database:
+        rm_project_files(project)
+        del db[project['name']]
+        write_db(config, db)
 
-    return 0
-
+def find_op(config, args):
+    db = read_db(config)
+    project = find_project(db, args.name)
+    if project:
+        print("{0}:{1}".format(project['name'], project['output']))
 
 if __name__ == "__main__":
 
-    # The default config file:
+    # The path to the default cscope_db config file:
     default_config = os.path.join(os.path.expanduser("~"), ".cscope_db",
             "config")
 
