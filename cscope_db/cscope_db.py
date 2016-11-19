@@ -122,7 +122,16 @@ def get_generators(config):
     return {cfg: os.path.join(gendir,cfg) for cfg in
             os.listdir(gendir) if not cfg.startswith(('.','_'))}
 
-def make_project_name(db, root):
+def get_genpath(config, generator):
+    """ Get the full path to the generator script. """
+    try:
+        return get_generators(config)[generator]
+    except KeyError:
+        raise GeneratorError(generator)
+    except:
+        raise
+
+def unique_project_name(db, root):
     """ Generate a unique project name based on the source root path. """
     (head, base) = os.path.split(root)
     suffix = ""
@@ -199,12 +208,8 @@ def init_op(config, args):
     db = read_db(config)
 
     # Find the appropriate generator script:
-    generators = get_generators(config)
     generator = args.generator
-    if generators.has_key(generator):
-        genpath = generators[generator]
-    else:
-        raise GeneratorError(generator)
+    genpath = get_genpath(config, generator)
 
     # Cleanup any old projects with the same output directory.
     # Check for project name conflicts at the same time.
@@ -225,7 +230,7 @@ def init_op(config, args):
     os.system(runner)
 
     # Create a unique project name if not provided by the caller:
-    name = args.name or make_project_name(db, args.root)
+    name = args.name or unique_project_name(db, args.root)
 
     # Update the database:
     project = {'name': name,
@@ -244,7 +249,7 @@ def rm_project_files(project):
     """
     Cleans all the project files and project directory.
 
-    Note: It does not remove the project from the database.
+    Note: The project entry is not removed from the database.
     """
     outputdir = project['output']
     try:
@@ -269,6 +274,14 @@ def find_op(config, args):
 def run_op(config, args):
     db = read_db(config)
     project = find_project(db, args.name)
+    runner = project['runner']
+
+    # Reconstruct the runner script if it's missing:
+    if not os.path.isfile(runner):
+        genpath = get_genpath(config, project['generator'])
+        (output, name) = os.path.split(project['runner'])
+        build_generator_script(genpath, name, project['root'], output)
+
     os.system(project['runner'])
     project['updated'] = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     write_db(config, db)
@@ -352,6 +365,9 @@ def main():
     run_parser.add_argument("name",
             help="Project name.", nargs='?')
     run_parser.set_defaults(func=run_op)
+
+    if not args:
+        args.append("run")
 
     # Parse the arguments:
     args = parser.parse_args(args)
