@@ -3,21 +3,20 @@
 # bash completion support for cscope_db.py
 #
 #
-_cscope_db_complete()
-{
-    local word=${COMP_WORDS[COMP_CWORD]}
-    local results
 
-    if [[ "${#COMP_WORDS[@]}" == "2" ]]; then
-        results=`cscope_db.py list_cmds`
-    else
-        results="some thing good ${#COMP_WORDS[@]}"
-    fi
-
-    COMPREPLY=($( compgen -W "${results}" -- "${word}"))
+_cscope_db_cmds_opts() {
+    cscope_db.py --help | awk '/^[[:blank:]]{1,4}[a-z-]/ { print $1 }'
 }
 
-# Has bash execute the '_cscope_db_complete' function when asked to do command
-# completion for either 'cs' or 'cscope_db.py'
-complete -F _cscope_db_complete cs
-complete -F _cscope_db_complete cscope_db.py
+_cscope_db_complete()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        cscope_db.py | cs)
+            COMPREPLY=( $( compgen -W '$(_cscope_db_cmds_opts)' -- "$cur" ) )
+            return
+            ;;
+    esac
+} && complete -F _cscope_db_complete cscope_db.py cs
