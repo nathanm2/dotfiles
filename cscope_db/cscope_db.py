@@ -180,19 +180,28 @@ def list_op(config, args):
         if not gens:
             raise GeneratorError(args.generator)
 
-    print("Generators:")
-    for name,path in gens.items():
-        print("  {0:15}  {1}".format(name, path))
-
-    print("\nProjects:")
     db = read_db(config)
+    db = {k:v for k,v in db.iteritems() if v["generator"] in gens.keys()}
+
+    count = 0
     for name,entry in db.items():
+        if count == 0:
+            print("Projects:")
+        else:
+            print("")
+        count += 1
         print("  {0:15}  {1:15} {2}".format(name,
             entry["generator"],
             entry["updated"]))
         print("      Root: {0}".format(entry["root"]))
-        print("    Output: {0}\n".format(entry["output"]))
+        print("    Output: {0}".format(entry["output"]))
     return 0
+
+def list_generators_op(config, args):
+    gens = get_generators(config)
+    print("Generators:")
+    for name, path in gens.items():
+        print("  {0:15}  {1}".format(name, path))
 
 def build_generator_script(genpath, name, root, output):
     script = os.path.join(output, name)
@@ -286,11 +295,6 @@ def run_op(config, args):
     project['updated'] = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     write_db(config, db)
 
-def list_cmds_op(config, args):
-    cmds = [key[:-3] for key,value in globals().items()
-            if callable(value) and key.endswith("_op")]
-    print("{0}".format(" ".join(cmds)))
-
 def main():
     # The path to the default cscope_db config file:
     default_config = os.path.join(os.path.expanduser("~"), ".cscope_db",
@@ -314,7 +318,7 @@ def main():
 
     # Create sub-parsers to process the remaining commands:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", "-c",
+    parser.add_argument("-c", "--config",
             help="{}'s configuration file.  Default: {}".\
                     format(NAME, default_config),
             default=default_config)
@@ -325,12 +329,17 @@ def main():
 
     # List Sub-command:
     list_parser = subparsers.add_parser('list',
-            help="List generators and projects.")
+            help="List projects.")
     list_parser.add_argument("--generator", "-g",
             help="Filter by generator")
     list_parser.add_argument("names",
             help="Project names.", nargs='*')
     list_parser.set_defaults(func=list_op)
+
+    # List Generators Sub-command:
+    list_parser = subparsers.add_parser("list-generators",
+            help="List generators.")
+    list_parser.set_defaults(func=list_generators_op)
 
     # Init Sub-command:
     init_parser = subparsers.add_parser('init',
@@ -370,11 +379,6 @@ def main():
     run_parser.add_argument("name",
             help="Project name.", nargs='?')
     run_parser.set_defaults(func=run_op)
-
-    # List Commands Sub-command:
-    list_cmds_parser = subparsers.add_parser('list_cmds',
-            help="List the available cscope_db.py commands.")
-    list_cmds_parser.set_defaults(func=list_cmds_op)
 
     if not args:
         args.append("run")

@@ -4,19 +4,78 @@
 #
 #
 
-_cscope_db_cmds_opts() {
-    cscope_db.py --help | awk '/^[[:blank:]]{1,4}[a-z-]/ { print $1 }'
+_cscope_db_cmds() {
+    cscope_db.py --help | awk '/^ {4}[a-z]/{print $1}'
+}
+
+_cscope_db_cmds_gopts() {
+    cscope_db.py --help | awk \
+        '/^ {4}[a-z]/ {print $1}
+         /^ {2}-/     {match($0, /--[a-z][a-z_-]*/, arr); print arr[0]}'
+}
+
+_cscope_db_gens() {
+    cscope_db.py list-generators | awk 'NF == 2 {print $1}'
+}
+
+_cscope_db_projects() {
+    cscope_db.py list | awk 'NF == 4 {print $1}'
+}
+
+_cscope_db_cmd_opts() {
+    cscope_db.py $1 --help | awk \
+        '/^ {2}-/      {match($0, /--[a-z][a-z_-]*/, arr);print arr[0]}'
 }
 
 _cscope_db_complete()
 {
-    local cur prev words cword
+    local cur prev words cword cmds cmd
     _init_completion || return
 
     case $prev in
-        cscope_db.py | cs)
-            COMPREPLY=( $( compgen -W '$(_cscope_db_cmds_opts)' -- "$cur" ) )
+        cs | cscope_db.py | */cscope_db.py )
+            COMPREPLY=( $( compgen -W '$(_cscope_db_cmds_gopts)' -- "$cur" ) )
+            return
+            ;;
+        -r | --root | -o | --output)
+            _filedir -d
+            return
+            ;;
+        -c | --config)
+            _filedir
+            return
+            ;;
+        -g | --generator)
+            COMPREPLY=( $( compgen -W '$(_cscope_db_gens)' -- "$cur" ) )
             return
             ;;
     esac
+
+    # Identify our current command:
+    cmds=( $(_cscope_db_cmds) )
+
+    for tok in ${words[@]}; do
+        if [[ " ${cmds[@]} " =~ " ${tok} " ]]; then
+            cmd=${tok}
+        fi
+    done
+
+    # No command found (display the commands and global options):
+    if [ -z ${cmd+x} ]; then
+        COMPREPLY=( $( compgen -W '${cmds[@]} --config' -- "$cur" ) )
+        return
+    fi
+
+    # Display command specific options:
+    if [[ $cur == --* ]]; then
+        COMPREPLY=( $( compgen -W '$(_cscope_db_cmd_opts ${cmd})' -- "$cur" ) )
+        return
+    fi
+
+    # The following commands take a project name as a positional argument:
+    if [[ " list clear run " =~ " $cmd " ]]; then
+        COMPREPLY=( $( compgen -W '$(_cscope_db_projects ${cmd})' -- "$cur" ) )
+        return
+    fi
+
 } && complete -F _cscope_db_complete cscope_db.py cs
