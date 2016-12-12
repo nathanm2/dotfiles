@@ -54,7 +54,9 @@ _cscope_db_complete()
     # Identify our current command:
     cmds=( $(_cscope_db_cmds) )
 
-    for tok in ${words[@]}; do
+    # Slice off the first and last words:
+    # Note: The first case statement insures we have at least two words.
+    for tok in ${words[@]:1:$((${#words[@]}-2))}; do
         if [[ " ${cmds[@]} " =~ " ${tok} " ]]; then
             cmd=${tok}
         fi
@@ -72,7 +74,7 @@ _cscope_db_complete()
         return
     fi
 
-    # The following commands take a project name as a positional argument:
+    # Some commands take a project name as a positional argument:
     if [[ " list clear run " =~ " $cmd " ]]; then
         COMPREPLY=( $( compgen -W '$(_cscope_db_projects ${cmd})' -- "$cur" ) )
         return

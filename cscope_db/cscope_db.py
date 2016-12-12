@@ -388,12 +388,11 @@ def main():
 
     # Invoke the appropriate sub-operation:
     try:
-        args.func(config, args)
-        return 0
+        return args.func(config, args)
     except Error as e:
         error(e.message)
         return 1
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
 
