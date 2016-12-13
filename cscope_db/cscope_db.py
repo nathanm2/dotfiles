@@ -28,13 +28,13 @@ class ProjectError(Error):
 class ProjectNameError(ProjectError):
     """ Exception raised when a project cannot be found by name """
     def __init__(self, projectname):
-        msg = "No project found in database: {}".format(projectname)
+        msg = "No project found in database: {0}".format(projectname)
         super().__init__(msg)
 
 class GeneratorError(Error):
     """ Generator related error. """
     def __init__(self, generator):
-        self.message = "No generator found: {}".format(generator)
+        self.message = "No generator found: {0}".format(generator)
 
 # Utilities:
 
@@ -42,11 +42,11 @@ NAME= os.path.basename(__file__)
 
 def error(msg):
     """ Display an error message to the standard error stream. """
-    sys.stderr.write("** {}: {}\n".format(NAME, msg))
+    sys.stderr.write("** {0}: {1}\n".format(NAME, msg))
 
 def status(msg):
     """ Display a status message to the standard out stream. """
-    sys.stdout.write("** {}: {}\n".format(NAME, msg))
+    sys.stdout.write("** {0}: {1}\n".format(NAME, msg))
 
 def script_dir():
     """ Return the directory path containing this script."""
@@ -63,7 +63,7 @@ def ensure_dir(dirname):
 
 def create_config(configname):
     """ Create a program 'config' file with suitable defaults: """
-    status("creating config file: {}.".format(configname))
+    status("creating config file: {0}.".format(configname))
 
     configdir = os.path.dirname(configname)
     ensure_dir(configdir)
@@ -125,8 +125,11 @@ def write_db(config, db):
 def get_generators(config):
     """ Get a dict of {'generator name' => 'generator path'} """
     gendir = config.get('config', 'generators')
-    return {cfg: os.path.join(gendir,cfg) for cfg in
-            os.listdir(gendir) if not cfg.startswith(('.','_'))}
+    out = {}
+    for cfg in os.listdir(gendir):
+        if not cfg.startswith(('.','_')):
+            out[cfg] = os.path.join(gendir,cfg)
+    return out
 
 def get_genpath(config, generator):
     """ Get the full path to the generator script. """
@@ -143,7 +146,7 @@ def unique_project_name(db, root):
     suffix = ""
     idx = 0
     while True:
-        name = "{}{}".format(base, suffix)
+        name = "{0}{1}".format(base, suffix)
         if name not in db.keys():
             return name
         idx += 1
@@ -164,7 +167,7 @@ def find_project_by_dir(db, dir=os.getcwd()):
                 result_len = root_len
 
     if not result:
-        msg = "No parent project found for directory: {}".format(dir)
+        msg = "No parent project found for directory: {0}".format(dir)
         raise ProjectError(msg)
 
     return result
@@ -182,12 +185,20 @@ def find_project(db, projectname=None):
 def list_op(config, args):
     gens = get_generators(config)
     if args.generator:
-        gens = {k:v for k,v in gens.iteritems() if args.generator == k}
+        _gens = {}
+        for k,v in gens.iteritems():
+            if args.generator == k:
+                _gens[k] = v
+        gens = _gens
         if not gens:
             raise GeneratorError(args.generator)
 
     db = read_db(config)
-    db = {k:v for k,v in db.iteritems() if v["generator"] in gens.keys()}
+    _db = {}
+    for k,v in db.iteritems():
+        if v["generator"] in gens.keys():
+            _db[k] = v
+    db = _db
 
     count = 0
     for name,entry in db.items():
@@ -236,7 +247,7 @@ def init_op(config, args):
             rm_project_files(project)
             del db[projectname]
         elif args.name == projectname:
-            msg = "Project name already in use: {}".format(projectname)
+            msg = "Project name already in use: {0}".format(projectname)
             raise ProjectError(msg)
 
     # Build a shell script for invoking the generator:
@@ -256,7 +267,7 @@ def init_op(config, args):
                'generator': generator,
                'root': args.root,
                'runner': runner,
-               'updated':'{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+               'updated':'{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
               }
     db[name] = project
 
@@ -280,7 +291,7 @@ def rm_project_files(project):
 def clear_op(config, args):
     db = read_db(config)
     project = find_project(db, args.name)
-    status("removing generator files: {}".format(project["name"]))
+    status("removing generator files: {0}".format(project["name"]))
     rm_project_files(project)
     del db[project['name']]
     write_db(config, db)
@@ -302,9 +313,9 @@ def run_op(config, args):
         status("rebuilding generator")
         build_generator_script(genpath, name, project['root'], output)
 
-    status("running generator: {}".format(project['name']))
+    status("running generator: {0}".format(project['name']))
     os.system(project['runner'])
-    project['updated'] = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+    project['updated'] = '{0:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     write_db(config, db)
 
 def main():
@@ -331,7 +342,7 @@ def main():
     # Create sub-parsers to process the remaining commands:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("-c", "--config",
-            help="{}'s configuration file.  Default: {}".\
+            help="{0}'s configuration file.  Default: {1}".\
                     format(NAME, default_config),
             default=default_config)
 
