@@ -44,6 +44,10 @@ def error(msg):
     """ Display an error message to the standard error stream. """
     sys.stderr.write("** {}: {}\n".format(NAME, msg))
 
+def status(msg):
+    """ Display a status message to the standard out stream. """
+    sys.stdout.write("** {}: {}\n".format(NAME, msg))
+
 def script_dir():
     """ Return the directory path containing this script."""
     return os.path.dirname(os.path.abspath(inspect.getfile(
@@ -59,6 +63,8 @@ def ensure_dir(dirname):
 
 def create_config(configname):
     """ Create a program 'config' file with suitable defaults: """
+    status("creating config file: {}.".format(configname))
+
     configdir = os.path.dirname(configname)
     ensure_dir(configdir)
     config="""# Configuration file for cscope_db.py
@@ -226,6 +232,7 @@ def init_op(config, args):
     for project in db.values():
         projectname = project['name']
         if output == project['output']:
+            status("removing old generator files.")
             rm_project_files(project)
             del db[projectname]
         elif args.name == projectname:
@@ -233,9 +240,11 @@ def init_op(config, args):
             raise ProjectError(msg)
 
     # Build a shell script for invoking the generator:
+    status("building generator")
     runner = build_generator_script(genpath, args.runname, args.root, output)
 
     # Run the generator script:
+    status("running generator")
     os.system(runner)
 
     # Create a unique project name if not provided by the caller:
@@ -271,6 +280,7 @@ def rm_project_files(project):
 def clear_op(config, args):
     db = read_db(config)
     project = find_project(db, args.name)
+    status("removing generator files: {}".format(project["name"]))
     rm_project_files(project)
     del db[project['name']]
     write_db(config, db)
@@ -289,8 +299,10 @@ def run_op(config, args):
     if not os.path.isfile(runner):
         genpath = get_genpath(config, project['generator'])
         (output, name) = os.path.split(project['runner'])
+        status("rebuilding generator")
         build_generator_script(genpath, name, project['root'], output)
 
+    status("running generator: {}".format(project['name']))
     os.system(project['runner'])
     project['updated'] = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     write_db(config, db)
