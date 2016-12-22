@@ -319,3 +319,12 @@ endfunction
 :call GitHandle()
 
 :set path=$PWD/**
+
+let wiki_1 = {}
+let wiki_1.path = '~/Dropbox/vimwiki/'
+
+let wiki_2 = {}
+let wiki_2.path = '~/vimwiki/'
+
+let g:vimwiki_list = [wiki_1, wiki_2]
+
