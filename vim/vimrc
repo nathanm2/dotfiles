@@ -120,9 +120,6 @@
 :nnoremap <c-l> <c-w><c-l>
 :nnoremap <c-h> <c-w><c-h>
 
-" Highlight redundant spaces at the end of a line:
-:nnoremap <leader>w /\s\+$<cr>
-
 " Clear the last search:
 :nnoremap <leader>c :nohlsearch<cr>
 
@@ -149,27 +146,8 @@ set listchars=eol:$,tab:>-
 " Project Configuration ===================================================
 "       To permit different settings for different coding projects.
 
-" Default Config:
-function! s:DefaultConfig(path)
-
-    " Enable automatic C program indenting:
-    set cindent
-
-    " Controls automatic C indentation:
-    "    :0  - Place case labels on the same indent as the switch.
-    "    (0  - When in unclosed parentheses, line up with next non-white after
-    "          the unclosed parentheses.
-    "    l1  - Always align with the case label instead of the statement after
-    "          it on the same line.
-    "    t0  - Indent a function return type declaration 0 characters from the
-    "          margin.
-    set cinoptions=:0,(0,l1,t0
-
-    " How automatic formatting is done (see :help fo-table):
-    "    c  : Auto-wrap comments using textwidth, inserting the current comment
-    "         leader automatically.
-    "    q  : Allow formatting of comments with gq.
-    set formatoptions=cq
+" Common Config:
+function! s:CommonConfig()
 
     " Maximum width of text that is being inserted.  Longer lines will be
     " broken up.
@@ -198,22 +176,32 @@ function! s:DefaultConfig(path)
 
     highlight RedundantSpaces ctermbg=red guibg=red
     match RedundantSpaces /\s\+$\| \+\ze\t/
-
-    " Enable C code completion:
-    set omnifunc=ccomplete#Complete
-
-    return 1
 endfunction
 
-" HDM Project:
-function! s:HdmConfig(path)
-    if a:path =~ 'src/\(HDM\|hdm\)'
+" C/C++/Java Configuration:
+function! s:CConfig()
 
-        " Call the defaults:
-        call s:DefaultConfig(a:path)
+    "Apply the common configuration:
+    call s:CommonConfig()
 
-        return 1
-    endif
+    " Enable automatic C program indenting:
+    set cindent
+
+    " Controls automatic C indentation:
+    "    :0  - Place case labels on the same indent as the switch.
+    "    (0  - When in unclosed parentheses, line up with next non-white after
+    "          the unclosed parentheses.
+    "    l1  - Always align with the case label instead of the statement after
+    "          it on the same line.
+    "    t0  - Indent a function return type declaration 0 characters from the
+    "          margin.
+    set cinoptions=:0,(0,l1,t0
+
+    " How automatic formatting is done (see :help fo-table):
+    "    c  : Auto-wrap comments using textwidth, inserting the current comment
+    "         leader automatically.
+    "    q  : Allow formatting of comments with gq.
+    set formatoptions=cq
 endfunction
 
 " JSON Config:
@@ -235,10 +223,17 @@ endfunction
 function! s:MarkdownConfig()
 
     " Call the defaults:
-    call s:DefaultConfig("")
-
+    call s:CommonConfig()
     set textwidth=78
     set foldcolumn=1
+endfunction
+
+" Vimwiki Config:
+function! s:VimwikiConfig()
+
+    " Call the defaults:
+    call s:CommonConfig()
+    set tabstop=2 shiftwidth=2 softtabstop=2
 endfunction
 
 " Restructured Text Config:
@@ -264,11 +259,32 @@ function! s:RstConfig()
 
 endfunction
 
-:let g:Configs = [ function("s:HdmConfig"), function("s:DefaultConfig") ]
+" Projects:
+
+" Default Configuration:
+function! s:DefaultProject(path)
+    if &filetype =~ 'c\|cpp\|java'
+        call s:CConfig()
+    else
+        call s:CommonConfig()
+    endif
+    return 1
+endfunction
+
+" HDM Project:
+function! s:HdmProject(path)
+    if a:path =~ 'src/\(HDM\|hdm\)'
+        " Call the defaults:
+        call s:DefaultProject(a:path)
+
+        return 1
+    endif
+endfunction
+:let g:Projects = [ function("s:HdmProject"), function("s:DefaultProject") ]
 
 function! s:ProjectConfigure()
     let path = expand('%:p')
-    for Fn in g:Configs
+    for Fn in g:Projects
         if Fn(path)
             break
         endif
@@ -290,16 +306,28 @@ endfunction
 :   autocmd FileType json call s:JsonConfig()
 :augroup END
 
-" Invoke MarkdownConfig for all Markdown, vimwiki files:
+" Invoke MarkdownConfig for all Markdown files:
 :augroup filetype_markdown
 :   autocmd!
-:   autocmd FileType markdown,vimwiki call s:MarkdownConfig()
+:   autocmd FileType markdown call s:MarkdownConfig()
+:augroup END
+
+" Invoke MarkdownConfig for all vimwiki files:
+:augroup filetype_vimwiki
+:   autocmd!
+:   autocmd FileType vimwiki call s:VimwikiConfig()
 :augroup END
 
 " Invoke RstConfig for all Restructured Text files:
 :augroup filetype_rst
 :   autocmd!
 :   autocmd FileType rst call s:RstConfig()
+:augroup END
+
+" Invoke DefaultConfig for all Vim configuration files:
+:augroup filetype_vim
+:   autocmd!
+:   autocmd FileType vim call s:CommonConfig()
 :augroup END
 
 " Git + Ctags =============================================================
@@ -323,11 +351,17 @@ endfunction
 
 :set path=$PWD/**
 
-let wiki_1 = {}
-let wiki_1.path = '~/Dropbox/vimwiki/'
+" Vimwiki Configuration =====================================================
 
-let wiki_2 = {}
-let wiki_2.path = '~/vimwiki/'
+" Open the vimwiki index in split window
+:noremap <Leader>wv :vsplit +VimwikiIndex<cr>
+:noremap <Leader>wh :split +VimwikiIndex<cr>
 
-let g:vimwiki_list = [wiki_1, wiki_2]
+let wiki_shared = {}
+let wiki_shared.path = '~/Dropbox/vimwiki/'
+
+let wiki_local = {}
+let wiki_local.path = '~/vimwiki/'
+
+let g:vimwiki_list = [wiki_local, wiki_shared]
 
