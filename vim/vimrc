@@ -123,10 +123,10 @@
 " Clear the last search:
 :nnoremap <leader>c :nohlsearch<cr>
 
+
 " Cause ctrlp (and everything else) to open a vertically split file to the
 " right of the current window:
 :set splitright
-
 
 " By default VIM complains when you try to navigate away from a buffer that
 " has unsaved changes.  We set the following option to avoid this complaint.
@@ -142,6 +142,41 @@ endif
 " How to display EOL and tab characters when the 'list' option has been
 " enabled:
 set listchars=eol:$,tab:>-
+
+" Insert Completions ======================================================
+
+" Configure the behavior of the menu popup:
+"    - longest: Only insert the longest common test of the matches.
+"    - menu   : Use a popup menu to show the possible completions.
+:set completeopt=longest,menu
+
+" Make it a bit easier to get to the completions:
+"   Note: see :help inc-completions for a full list of all the insert
+"   completions that VIM supports.  We're only providing maps for two of them.
+:inoremap <c-]> <c-x><c-]>
+:inoremap <c-o> <c-x><c-o>
+
+" Make <Tab> start/continue an omni-completion:
+function! CleverTab()
+    if pumvisible()
+        return "\<C-N>"
+    elseif strpart( getline('.'), 0, col('.')-1 ) =~ '^$\|\s\+$'
+        return "\<Tab>"
+    else
+        return "\<C-X>\<C-O>"
+   endif
+endfunction
+inoremap <Tab> <C-R>=CleverTab()<CR>
+
+" Make <Tab> start/continue an omni-completion from Vimwiki when NOT in a table:
+"   Note: Vimwiki defines its own local mapping for <Tab> that effects behavior
+"   while in a table.  We'd like to retain the behavior.
+function! CleverTabVimwiki()
+    if vimwiki#tbl#is_table(getline("."))
+        return vimwiki#tbl#kbd_tab()
+    else
+        return CleverTab()
+endfunction
 
 " Project Configuration ===================================================
 "       To permit different settings for different coding projects.
@@ -228,12 +263,14 @@ function! s:MarkdownConfig()
     set foldcolumn=1
 endfunction
 
+
 " Vimwiki Config:
 function! s:VimwikiConfig()
 
     " Call the defaults:
     call s:CommonConfig()
     set tabstop=2 shiftwidth=2 softtabstop=2
+    inoremap <expr> <buffer> <Tab> CleverTabVimwiki()
 endfunction
 
 " Restructured Text Config:
