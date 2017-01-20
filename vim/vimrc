@@ -123,6 +123,8 @@
 " Clear the last search:
 :nnoremap <leader>c :nohlsearch<cr>
 
+" Turn on syntax folding:
+:nnoremap <leader>z :set foldmethod=syntax foldlevel=2<cr>
 
 " Cause ctrlp (and everything else) to open a vertically split file to the
 " right of the current window:
@@ -154,7 +156,7 @@ set listchars=eol:$,tab:>-
 "   Note: see :help inc-completions for a full list of all the insert
 "   completions that VIM supports.  We're only providing maps for two of them.
 :inoremap <c-]> <c-x><c-]>
-:inoremap <c-o> <c-x><c-o>
+":inoremap <c-o> <c-x><c-o>
 
 " Make <Tab> start/continue an omni-completion:
 function! CleverTab()
@@ -270,6 +272,10 @@ function! s:VimwikiConfig()
     " Call the defaults:
     call s:CommonConfig()
     set tabstop=2 shiftwidth=2 softtabstop=2
+
+    " Auto-wrap text using textwidth:
+    set formatoptions+=t
+
     inoremap <expr> <buffer> <Tab> CleverTabVimwiki()
 endfunction
 
