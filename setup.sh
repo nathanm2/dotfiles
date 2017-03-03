@@ -74,7 +74,7 @@ fi
 git config --global alias.rclean '!git clean -fdx && git submodule foreach git clean -fdx'
 
 # Add the 'su' alias to do a submodule update:
-git config --global alias.su 'submodule update'
+git config --global alias.su 'submodule update --init --recursive'
 
 # Enable 'Reuse Recorded Resolution' globally:
 git config --global rerere.enabled true
