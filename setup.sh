@@ -79,3 +79,8 @@ git config --global alias.su 'submodule update'
 # Enable 'Reuse Recorded Resolution' globally:
 git config --global rerere.enabled true
 
+# Get sub-module status in `git status`:
+git config --global status.submodulesSummary true
+
+# Git diff to show a bit more details for submodules:
+git config --global diff.submodule log
