@@ -71,7 +71,7 @@ if ! git config --global init.templatedir >/dev/null; then
 fi
 
 # Add the 'rclean' alias to recursively clean a repo:
-git config --global alias.rclean '!git clean -fdx && git submodule foreach git clean -fdx'
+git config --global alias.rclean '!git clean -ffdx && git submodule foreach --recursive git clean -ffdx'
 
 # Add the 'su' alias to do a submodule update:
 git config --global alias.su 'submodule update --init --recursive'
