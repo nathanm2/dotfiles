@@ -162,7 +162,7 @@ set listchars=eol:$,tab:>-
 function! CleverTab()
     if pumvisible()
         return "\<C-N>"
-    elseif strpart( getline('.'), 0, col('.')-1 ) =~ '^$\|\s\+$'
+    elseif strpart( getline('.'), col('.')-2, 1 ) =~ '^$\|\s\|;\|\"\|>'
         return "\<Tab>"
     else
         return "\<C-X>\<C-O>"
