@@ -134,6 +134,8 @@
 " has unsaved changes.  We set the following option to avoid this complaint.
 " :set hidden
 
+autocmd GUIEnter * set vb t_vb=
+
 " Display a visual ruler on the 80 column.  Change the color to 'black' on
 " terminal versions of vim (ctermbg=0), and lightgrey on GUI versions:
 if exists('+colorcolumn')
