@@ -385,9 +385,9 @@ endfunction
 "  Recall that tags are used for things like tag jumping and omni completion.
 function! GitHandle()
     if system("git rev-parse --is-inside-work-tree") ==? "true\n"
-        let s:res = system("git rev-parse --show-toplevel")
+        let s:res = system("git rev-parse --git-dir")
         let s:res = substitute(s:res, '\n$', '', '')
-        let &tags = &tags . "," . s:res . "/.git/tags"
+        let &tags = &tags . "," . s:res . "/tags"
     endif
 endfunction
 

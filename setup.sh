@@ -62,13 +62,11 @@ fi
 # Rebuild ctags and cscope every time a git repo is modified via a checkout,
 # merge, rebase or commit.
 #
-if ! git config --global init.templatedir >/dev/null; then
-	git config --global init.templatedir ${DIR}/git_template
-	git config --global alias.ctags '!.git/hooks/ctags'
-	git config --global alias.ctags-enable '!.git/hooks/ctags-enable'
-	git config --global alias.ctags-disable '!.git/hooks/ctags-disable'
-    git config --global alias.cscope '!.git/hooks/cscope'
-fi
+git config --global init.templatedir ${DIR}/git_template
+git config --global alias.ctags '!`git rev-parse --git-dir`/hooks/ctags'
+git config --global alias.ctags-enable '!`git rev-parse --git-dir`/hooks/ctags-enable'
+git config --global alias.ctags-disable '!`git rev-parse --git-dir`/hooks/ctags-disable'
+git config --global alias.cscope '!.git/hooks/cscope'
 
 # Add the 'rclean' alias to recursively clean a repo:
 git config --global alias.rclean '!git clean -ffdx && git submodule foreach --recursive git clean -ffdx'
