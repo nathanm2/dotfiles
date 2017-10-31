@@ -410,3 +410,7 @@ let wiki_local.path = '~/vimwiki/'
 
 let g:vimwiki_list = [wiki_local, wiki_shared]
 
+" Clang-Format Integration ==================================================
+
+:noremap <leader>f :pyf ~/bin/clang-format.py<cr>
+:imap <c-f> <c-o>:pyf ~/bin/clang-format.py<cr>
