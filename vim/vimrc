@@ -414,3 +414,27 @@ let g:vimwiki_list = [wiki_local, wiki_shared]
 
 :noremap <leader>f :pyf ~/bin/clang-format.py<cr>
 :imap <c-f> <c-o>:pyf ~/bin/clang-format.py<cr>
+
+" Clang Format =============================================================
+"
+" 'clang-format' is a tool for formatting C/C++/Java code.
+"
+" The following autocmd causes VIM to run clang-format when we save a C/C++
+" file.
+"
+" If a .clang-format file is not found in the current or parent directories, we
+" specify a fallback style of 'none' to prevent any formatting from occuring.
+
+let g:clang_format_fallback_style = 'none'
+function! FormatFile()
+    let l:lines="all"
+    if has('python3')
+        py3f ~/bin/clang-format.py
+    elseif has('python')
+        pyf ~/bin/clang-format.py
+    endif
+endfunction
+
+if filereadable(expand("~/bin/clang-format.py"))
+    autocmd bufWritePre *.h,*.c,*.cpp call FormatFile()
+endif
