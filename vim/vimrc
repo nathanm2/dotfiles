@@ -436,5 +436,5 @@ function! FormatFile()
 endfunction
 
 if filereadable(expand("~/bin/clang-format.py"))
-    autocmd bufWritePre *.h,*.c,*.cpp call FormatFile()
+    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
 endif
