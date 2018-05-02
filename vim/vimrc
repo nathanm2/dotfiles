@@ -46,9 +46,13 @@
 :Plugin 'rust-lang/rust.vim'
 
 " Enable GO language support.
-:Plugin 'fatih/vim-go'
+" :Plugin 'fatih/vim-go'
 
+" Enables the 'Ack: <string> <dir>' search.
 :Plugin 'ack.vim'
+
+" Enable 'unimpaired' which are a set of convenience mappings.
+:Plugin 'unimpaired.vim'
 
 " No comments can on the Plugin line.
 
@@ -344,7 +348,7 @@ endfunction
 " sourcing of the vimrc.
 :augroup filetype_c
 :   autocmd!
-:   autocmd FileType c,cpp,cmake,bash,sh,python call s:ProjectConfigure()
+:   autocmd FileType c,cpp,cmake,bash,sh,python,groovy call s:ProjectConfigure()
 :augroup END
 
 " Invoke JsonConfig for all JSON files:
@@ -438,5 +442,5 @@ function! FormatFile()
 endfunction
 
 if filereadable(expand("~/bin/clang-format.py"))
-    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H call FormatFile()
+    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
 endif
