@@ -48,6 +48,8 @@
 " Enable GO language support.
 :Plugin 'fatih/vim-go'
 
+:Plugin 'ack.vim'
+
 " No comments can on the Plugin line.
 
 " All the Vundle plugins must be added before the following line:
@@ -436,5 +438,5 @@ function! FormatFile()
 endfunction
 
 if filereadable(expand("~/bin/clang-format.py"))
-    autocmd bufWritePre *.h,*.c,*.cpp call FormatFile()
+    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H call FormatFile()
 endif
