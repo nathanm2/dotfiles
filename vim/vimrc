@@ -314,7 +314,7 @@ endfunction
 
 " Default Configuration:
 function! s:DefaultProject(path)
-    if &filetype =~ 'c\|cpp\|java'
+    if &filetype =~ 'c\|cpp\|java\|groovy'
         call s:CConfig()
     else
         call s:CommonConfig()
