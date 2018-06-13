@@ -13,5 +13,6 @@ mkdir -p ${output}
 find ${input} -name "*.[CcHh]"\
    -o -name "*.cpp"\
    -o -name "*.cc"\
+   -o -name "*.cxx"\
    -o -name "*.hpp" > ${output}/cscope.files
 $(cd ${output}; cscope -b -q)

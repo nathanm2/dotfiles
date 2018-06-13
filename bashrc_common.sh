@@ -8,6 +8,14 @@ alias g=gvim
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 #
+# Add bin directory to your path:
+#
+bin_path=${DIR}/bin
+if [[ ":$PATH:" != *":${bin_path}:"* ]]; then
+    export PATH=$PATH:${bin_path}
+fi
+
+#
 # Add cscope_db to your path:
 #
 cscope_db_path=${DIR}/cscope_db
@@ -16,11 +24,6 @@ if [[ ":$PATH:" != *":${cscope_db_path}:"* ]]; then
 fi
 source ${DIR}/cscope_db/cscope_db_completion
 source ${DIR}/cscope_db/cscope_db_bash.sh
-
-# Alter the prompt if we're inside a Docker image:
-if [ -n "${DOCKER_IMAGE}" ] && [ -z "${debian_chroot:-}" ]; then
-    debian_chroot=${DOCKER_IMAGE##*/}
-fi
 
 #
 # Enable the git prompt

@@ -149,8 +149,7 @@ if exists('+colorcolumn')
 	highlight ColorColumn ctermbg=0 guibg=lightgrey
 endif
 
-" How to display EOL and tab characters when the 'list' option has been
-" enabled:
+" Display EOL and tab characters running ':set list'
 set listchars=eol:$,tab:>-
 
 " Insert Completions ======================================================
@@ -230,6 +229,8 @@ function! s:CConfig()
     call s:CommonConfig()
 
     " Enable automatic C program indenting:
+    "
+    " Configured by cinoptions (see below).
     set cindent
 
     " Controls automatic C indentation:
@@ -247,6 +248,58 @@ function! s:CConfig()
     "         leader automatically.
     "    q  : Allow formatting of comments with gq.
     set formatoptions=cq
+endfunction
+
+" GNU Coding Standard:
+function! s:GnuConfig()
+
+    " Enable automatic C program indenting:
+    set cindent
+
+    " Controls automatic C indentation (see :help cinoptions-values)
+    "   >4   - Normal indentation.
+    "   n-2  - Added to the prevailing indent for a statement after an "if",
+    "          "while", etc., if it is NOT inside a set of braces.  The -2
+    "          causes single lines to appear in the same column as a brace.
+    "   {2   - Add 2 to an indent of a brace if the brace is inside another
+    "          brace.
+    "   :2   - Indent case statements 2 characters from the indent of the
+    "          switch.
+    "   =2   - Statements after the case label.
+    "   g0   - C++ scope declarations (public:, private:, etc.)
+    "   h2   - C++ statements after a scope declaration.
+    "   p5   - K&R-style function declaration indentation.
+    "   t0   - Function return type declaration.
+    "   +2   - Indentation of a continuation line.
+    "
+    " Parentheses Settings
+    "   (0   - When in unclosed parentheses.  Line up with the next non-white
+    "          character after the unclosed parentheses.
+    "   u0   - Same as (0, but for one level deeper.
+    "   w1   - Always line up with the character immediately after the
+    "          unclosed parentheses.
+    "   m1   - If the line starts with a closing parentheses line it up with the
+    "          first character of the line with the matching opening
+    "          parentheses.
+    set cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
+
+    " How many columns to indent code with the reindent operations (<< and >>)
+    " and automatic C-style indentation.
+    set shiftwidth=2
+
+    " How many spaces should a <Tab> count for while editing.
+    "   When expandtab is set, this permits a single 'backspace' to delete
+    "   all the spaces that constitute the expanded tab.
+    set softtabstop=2
+
+    set textwidth=79
+
+    " How automatic formatting is done (see :help fo-table):
+    "    c  : Auto-wrap comments using textwidth, inserting the current comment
+    "         leader automatically.
+    "    q  : Allow formatting of comments with gq.
+    "    l  : Long lines are not broken in insert mode.
+    set fo+=cql
 endfunction
 
 " JSON Config:
@@ -331,7 +384,20 @@ function! s:HdmProject(path)
         return 1
     endif
 endfunction
-:let g:Projects = [ function("s:HdmProject"), function("s:DefaultProject") ]
+
+" GNU Coding Style Projects
+function! s:GnuProject(path)
+    if a:path =~ 'src/glib'
+        " Call the defaults:
+        call s:GnuConfig()
+
+        return 1
+    endif
+endfunction
+
+:let g:Projects = [ function("s:HdmProject"),
+                \ function("s:GnuProject"),
+                \ function("s:DefaultProject") ]
 
 function! s:ProjectConfigure()
     let path = expand('%:p')
@@ -418,8 +484,13 @@ let g:vimwiki_list = [wiki_local, wiki_shared]
 
 " Clang-Format Integration ==================================================
 
-:noremap <leader>f :pyf ~/bin/clang-format.py<cr>
-:imap <c-f> <c-o>:pyf ~/bin/clang-format.py<cr>
+if has('python3')
+    :noremap <leader>f :py3f ~/bin/clang-format.py<cr>
+    :imap <c-f> <c-o>:py3f ~/bin/clang-format.py<cr>
+else
+    :noremap <leader>f :pyf ~/bin/clang-format.py<cr>
+    :imap <c-f> <c-o>:pyf ~/bin/clang-format.py<cr>
+endif
 
 " Clang Format =============================================================
 "
@@ -441,6 +512,6 @@ function! FormatFile()
     endif
 endfunction
 
-if filereadable(expand("~/bin/clang-format.py"))
-    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
-endif
+"if filereadable(expand("~/bin/clang-format.py"))
+"    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
+"endif
