@@ -54,6 +54,10 @@
 " Enable 'unimpaired' which are a set of convenience mappings.
 :Plugin 'unimpaired.vim'
 
+" Enable 'abolish' which provides a convenient way to switch between camelCase,
+" MixedCase, and snake_case.
+:Plugin 'abolish.vim'
+
 " No comments can on the Plugin line.
 
 " All the Vundle plugins must be added before the following line:
@@ -300,6 +304,9 @@ function! s:GnuConfig()
     "    q  : Allow formatting of comments with gq.
     "    l  : Long lines are not broken in insert mode.
     set fo+=cql
+
+    " Tells VIM how many columns a tab character counts for:
+    set tabstop=8
 endfunction
 
 " JSON Config:
@@ -387,7 +394,7 @@ endfunction
 
 " GNU Coding Style Projects
 function! s:GnuProject(path)
-    if a:path =~ 'src/glib'
+    if a:path =~ 'src/glib\($\|/\)'
         " Call the defaults:
         call s:GnuConfig()
 

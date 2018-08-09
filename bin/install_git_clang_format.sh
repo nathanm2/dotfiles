@@ -40,8 +40,7 @@ exit 0
 
 # Run clang-format on only the changed lines of code
 function format_diff() {
-    # Get the list of files in this commit
-    local files=$(git diff --cached --name-only)
+    local files=$(git status --porcelain | sed -n 's/^[MARC]. \(.* -> \)\?\(.*\)$/\2/ p')
 
     # Try to format the diff
     echo "Running clang-format on the changes..."
