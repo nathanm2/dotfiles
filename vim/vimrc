@@ -370,6 +370,18 @@ function! s:RstConfig()
 
 endfunction
 
+function! s:RustConfig()
+
+    " Enable automatic running of :RustFmt when saving a buffer.
+    let g:rustfmt_autosave = 1
+
+    " Maximum width of text that is being inserted.  Longer lines will be
+    " broken up.
+    set textwidth=100
+
+	set colorcolumn=100
+endfunction
+
 " Projects:
 
 " Default Configuration:
@@ -452,6 +464,12 @@ endfunction
 :augroup filetype_vim
 :   autocmd!
 :   autocmd FileType vim call s:CommonConfig()
+:augroup END
+
+" Invoke DefaultConfig for all Rust files:
+:augroup filetype_rust
+:   autocmd!
+:   autocmd FileType rust call s:RustConfig()
 :augroup END
 
 " Git + Ctags =============================================================
