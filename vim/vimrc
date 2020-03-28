@@ -252,6 +252,16 @@ function! s:CConfig()
     "         leader automatically.
     "    q  : Allow formatting of comments with gq.
     set formatoptions=cq
+
+    " Let <Leader>-f run clang-format on the specified region of code:
+    if has('python3')
+        :noremap <leader>f :py3f ~/bin/clang-format.py<cr>
+        :imap <c-f> <c-o>:py3f ~/bin/clang-format.py<cr>
+    else
+        :noremap <leader>f :pyf ~/bin/clang-format.py<cr>
+        :imap <c-f> <c-o>:pyf ~/bin/clang-format.py<cr>
+    endif
+
 endfunction
 
 " GNU Coding Standard:
@@ -331,6 +341,7 @@ function! s:MarkdownConfig()
     call s:CommonConfig()
     set textwidth=78
     set foldcolumn=1
+    set foldlevel=2
 endfunction
 
 
@@ -382,12 +393,25 @@ function! s:RustConfig()
 	set colorcolumn=100
 endfunction
 
+function! s:PythonConfig()
+
+    call s:CConfig()
+
+    " Maximum width of text that is being inserted.  Longer lines will be
+    " broken up.
+    set textwidth=100
+
+	set colorcolumn=100
+endfunction
+
 " Projects:
 
 " Default Configuration:
 function! s:DefaultProject(path)
     if &filetype =~ 'c\|cpp\|java\|groovy'
         call s:CConfig()
+    elseif &filetype =~ 'python'
+        call s:PythonConfig()
     else
         call s:CommonConfig()
     endif
@@ -445,7 +469,7 @@ endfunction
 " Invoke MarkdownConfig for all Markdown files:
 :augroup filetype_markdown
 :   autocmd!
-:   autocmd FileType markdown call s:MarkdownConfig()
+:   autocmd FileType markdown,asciidoc call s:MarkdownConfig()
 :augroup END
 
 " Invoke MarkdownConfig for all vimwiki files:
@@ -507,16 +531,6 @@ let wiki_local.path = '~/vimwiki/'
 
 let g:vimwiki_list = [wiki_local, wiki_shared]
 
-" Clang-Format Integration ==================================================
-
-if has('python3')
-    :noremap <leader>f :py3f ~/bin/clang-format.py<cr>
-    :imap <c-f> <c-o>:py3f ~/bin/clang-format.py<cr>
-else
-    :noremap <leader>f :pyf ~/bin/clang-format.py<cr>
-    :imap <c-f> <c-o>:pyf ~/bin/clang-format.py<cr>
-endif
-
 " Clang Format =============================================================
 "
 " 'clang-format' is a tool for formatting C/C++/Java code.
@@ -537,6 +551,6 @@ function! FormatFile()
     endif
 endfunction
 
-"if filereadable(expand("~/bin/clang-format.py"))
+" if filereadable(expand("~/bin/clang-format.py"))
 "    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
-"endif
+" endif
