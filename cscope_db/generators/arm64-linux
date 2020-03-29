@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# A simple script for creating Cscope files for the Linux kernel's PPC code.
+#
+
+input=${1:-"${PWD}"}
+output=${2:-"${PWD}/.cscope"}
+
+# set -x
+mkdir -p ${output}
+find ${input} \
+    -path "${input}/arch/*" ! -path "${input}/arch/arm64*" -prune -o   \
+    -path "${input}/Documentation*" -prune -o \
+    -path "${input}/scripts*" -prune -o \
+    -path "${input}/drivers*" -prune -o \
+    -type f -name "*.[chxsS]" -print > ${output}/cscope.files
+$(cd ${output}; cscope -b -q -k)
