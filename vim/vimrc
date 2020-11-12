@@ -58,6 +58,8 @@
 " MixedCase, and snake_case.
 :Plugin 'abolish.vim'
 
+:Plugin 'meson.vim'
+
 " No comments can on the Plugin line.
 
 " All the Vundle plugins must be added before the following line:
@@ -340,7 +342,7 @@ function! s:MarkdownConfig()
     " Call the defaults:
     call s:CommonConfig()
     set textwidth=78
-    set foldcolumn=1
+    " set foldcolumn=1
     set foldlevel=2
 endfunction
 
@@ -404,6 +406,12 @@ function! s:PythonConfig()
 	set colorcolumn=100
 endfunction
 
+function! s:AptConfig()
+    call s:CConfig()
+    set shiftwidth=3 noexpandtab tabstop=8
+endfunction
+
+
 " Projects:
 
 " Default Configuration:
@@ -438,8 +446,19 @@ function! s:GnuProject(path)
     endif
 endfunction
 
+" APT Coding Style Projects
+function! s:AptProject(path)
+    if a:path =~ 'src/apt\($\|/\)'
+        " Call the defaults:
+        call s:AptConfig()
+
+        return 1
+    endif
+endfunction
+
 :let g:Projects = [ function("s:HdmProject"),
                 \ function("s:GnuProject"),
+                \ function("s:AptProject"),
                 \ function("s:DefaultProject") ]
 
 function! s:ProjectConfigure()
@@ -457,7 +476,7 @@ endfunction
 " sourcing of the vimrc.
 :augroup filetype_c
 :   autocmd!
-:   autocmd FileType c,cpp,cmake,bash,sh,python,groovy call s:ProjectConfigure()
+:   autocmd FileType c,cpp,cmake,bash,sh,python,groovy,cfg call s:ProjectConfigure()
 :augroup END
 
 " Invoke JsonConfig for all JSON files:
@@ -551,6 +570,6 @@ function! FormatFile()
     endif
 endfunction
 
-" if filereadable(expand("~/bin/clang-format.py"))
-"    autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
-" endif
+if filereadable(expand("~/bin/clang-format.py"))
+   autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
+endif
