@@ -45,6 +45,9 @@
 " Enable plugin for RUST language.
 :Plugin 'rust-lang/rust.vim'
 
+" Enable support for TOML.
+:Plugin 'cesapre/vim-toml'
+
 " Enable GO language support.
 " :Plugin 'fatih/vim-go'
 
@@ -93,6 +96,9 @@
 
 " Enable the 'peachpuff' color scheme (one of the default color schemes):
 :colorscheme peachpuff
+
+" Enable 24-bit color support in the terminal:
+:set termguicolors
 
 " Make tab completion follow bash shell conventions:
 :set wildmode=longest,list
@@ -406,6 +412,12 @@ function! s:PythonConfig()
 	set colorcolumn=100
 endfunction
 
+function! s:XmlConfig()
+    call s:CommonConfig()
+    set textwidth=120
+    set colorcolumn=120
+endfunction
+
 function! s:AptConfig()
     call s:CConfig()
     set shiftwidth=3 noexpandtab tabstop=8
@@ -476,7 +488,7 @@ endfunction
 " sourcing of the vimrc.
 :augroup filetype_c
 :   autocmd!
-:   autocmd FileType c,cpp,cmake,bash,sh,python,groovy,cfg call s:ProjectConfigure()
+:   autocmd FileType c,cpp,cmake,bash,sh,python,groovy,cfg,tcl call s:ProjectConfigure()
 :augroup END
 
 " Invoke JsonConfig for all JSON files:
@@ -509,10 +521,16 @@ endfunction
 :   autocmd FileType vim call s:CommonConfig()
 :augroup END
 
-" Invoke DefaultConfig for all Rust files:
+" Invoke RustConfig for all Rust files:
 :augroup filetype_rust
 :   autocmd!
 :   autocmd FileType rust call s:RustConfig()
+:augroup END
+
+" Invoke XmlConfig for all XML files:
+:augroup filetype_xml
+:   autocmd!
+:   autocmd FileType xml call s:XmlConfig()
 :augroup END
 
 " Git + Ctags =============================================================
@@ -570,6 +588,6 @@ function! FormatFile()
     endif
 endfunction
 
-if filereadable(expand("~/bin/clang-format.py"))
-   autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
-endif
+"if filereadable(expand("~/bin/clang-format.py"))
+"   autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
+"endif
