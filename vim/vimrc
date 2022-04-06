@@ -94,6 +94,9 @@
 " Remember the last 200 Ex commands instead of the default 20
 :set history=200
 
+" Enable 24-bit color support in the terminal:
+:set termguicolors
+
 " Enable the 'peachpuff' color scheme (one of the default color schemes):
 :colorscheme peachpuff
 
