@@ -426,6 +426,11 @@ function! s:AptConfig()
     set shiftwidth=3 noexpandtab tabstop=8
 endfunction
 
+function! s:RWRConfig()
+    call s:CConfig()
+    set textwidth=100
+    set colorcolumn=100
+endfunction
 
 " Projects:
 
@@ -471,10 +476,19 @@ function! s:AptProject(path)
     endif
 endfunction
 
+" RWR Coding Style
+function! s:RWRProject(path)
+    if a:path =~ 'src/rwrdecoder\($\|/\)'
+        " Call the defaults:
+        call s:RWRConfig()
+        return 1
+    endif
+endfunction
 :let g:Projects = [ function("s:HdmProject"),
                 \ function("s:GnuProject"),
                 \ function("s:AptProject"),
-                \ function("s:DefaultProject") ]
+                \ function("s:RWRProject"),
+                \ function("s:DefaultProject")]
 
 function! s:ProjectConfigure()
     let path = expand('%:p')
@@ -591,6 +605,6 @@ function! FormatFile()
     endif
 endfunction
 
-"if filereadable(expand("~/bin/clang-format.py"))
-"   autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
-"endif
+if filereadable(expand("~/bin/clang-format.py"))
+   autocmd bufWritePre *.h,*.c,*.cpp,*.cc,*.H,*.C call FormatFile()
+endif
