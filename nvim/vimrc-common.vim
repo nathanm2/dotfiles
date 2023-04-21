@@ -22,6 +22,10 @@ set termguicolors
 set clipboard+=unnamedplus
 
 " A character to be pressed before some of the following mappings take effect:
+"
+" To use the SPACEBAR as the leader key you should first remove the existing
+" mapping for SPACE which defaults to moving forward a single key.
+nnoremap <SPACE> <Nop>
 let mapleader = " "
 
 " Easier window movement mappings:
