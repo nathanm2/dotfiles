@@ -1,17 +1,6 @@
-" Debugging Tips =============================================================
+" Common Global Configs =============================================================
 "
-" List your scripts:
-"     :scriptnames
-"
-" Run VIM without any scripts:
-"     $ nvim -u NONE -U NONE
-"
-" Source plugins individually:
-"     :so path/to/script
-
-" Global Configs =============================================================
-"
-" Settings used in all file types.
+" Common vim options used in both vim AND neovim.
 "
 
 " Make 'jk' an escape sequence:
@@ -41,7 +30,6 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 nnoremap <c-h> <c-w><c-h>
 
-
 " Easily clear the last search result:
 nnoremap <leader>c :nohlsearch<cr>
 
@@ -56,6 +44,9 @@ set wildmode=longest:full,full
 " Enable mouse support in the terminal:
 "   a=all, n=normal, v=visual, i=insert
 set mouse=a
+
+" Ignore case when searching:
+set ignorecase
 
 " Enable "smart case":
 set smartcase
