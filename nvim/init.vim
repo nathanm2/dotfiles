@@ -10,11 +10,11 @@
 "     :so path/to/script
 
 " Global Configs =============================================================
-" 
+"
 " Settings used for all files.
-" 
+"
 
-" Make 'jk' an escape sequence.
+" Make 'jk' an escape sequence:
 inoremap jk <esc>
 
 " Enable 24-bit color support in the terminal:
@@ -22,6 +22,31 @@ set termguicolors
 
 " Color scheme:
 colorscheme default
+
+" Clipboard setup
+"
+" Unlike vim, neovim has no direct connection to the system clipboard and
+" instead relies on a "provider" to interface with the system.  The '*' (aka
+" PRIMARY) and '+' (aka CLIPBOARD) registers won't work unless neovim detects
+" a provider.
+"
+" See :help clipboard for a list of valid providers.  If you're running X,
+" then either xclip or xsel will work.  If you're running Wayland then you'll
+" need to install to `wl-clipboard` package to get the wl-copy and wl-paste
+" providers.
+
+" Previously, in vim, I defined the following mappings to copy, cut, and paste
+" to the CLIPBOARD buffer (+):
+"
+" noremap <F1> "+y
+" noremap <F2> "+d
+" noremap <F3> "+p
+"
+" However, there appears to be a better way: adding 'unnamedplus' to the
+" clipboard setting causes NVIM to use the CLIPBOARD buffer instead of the
+" UNNAMED buffer!  Cutting/pasting is now a simple matter of yanking and
+" putting!
+set clipboard+=unnamedplus
 
 " A character to be pressed before some of the following mappings take effect:
 let mapleader = "-"

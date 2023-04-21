@@ -160,7 +160,7 @@ autocmd GUIEnter * set vb t_vb=
 " Display a visual ruler on the 80 column.  Change the color to 'black' on
 " terminal versions of vim (ctermbg=0), and lightgrey on GUI versions:
 if exists('+colorcolumn')
-	set colorcolumn=80
+	set colorcolumn=100
 	highlight ColorColumn ctermbg=0 guibg=lightgrey
 endif
 
@@ -210,7 +210,7 @@ function! s:CommonConfig()
 
     " Maximum width of text that is being inserted.  Longer lines will be
     " broken up.
-    set textwidth=80
+    set textwidth=100
 
     " Insure the current window width is the same as the textwidth option:
     let &winwidth=&textwidth
@@ -317,7 +317,7 @@ function! s:GnuConfig()
     "   all the spaces that constitute the expanded tab.
     set softtabstop=2
 
-    set textwidth=79
+    set textwidth=100
 
     " How automatic formatting is done (see :help fo-table):
     "    c  : Auto-wrap comments using textwidth, inserting the current comment
@@ -350,7 +350,7 @@ function! s:MarkdownConfig()
 
     " Call the defaults:
     call s:CommonConfig()
-    set textwidth=78
+    set textwidth=100
     " set foldcolumn=1
     set foldlevel=2
 endfunction
@@ -374,7 +374,7 @@ function! s:RstConfig()
 
     " Maximum width of text that is being inserted.  Longer lines will be
     " broken up.
-    set textwidth=78
+    set textwidth=100
 
     " What character to show wrapped lines of text:
     set showbreak=>
@@ -400,7 +400,6 @@ function! s:RustConfig()
     " Maximum width of text that is being inserted.  Longer lines will be
     " broken up.
     set textwidth=100
-
 	set colorcolumn=100
 endfunction
 
@@ -478,12 +477,13 @@ endfunction
 
 " RWR Coding Style
 function! s:RWRProject(path)
-    if a:path =~ 'src/rwrdecoder\($\|/\)'
+    if a:path =~ 'src/\(rwrdecoder\|cyi\)\($\|/\)'
         " Call the defaults:
         call s:RWRConfig()
         return 1
     endif
 endfunction
+
 :let g:Projects = [ function("s:HdmProject"),
                 \ function("s:GnuProject"),
                 \ function("s:AptProject"),
