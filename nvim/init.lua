@@ -3,4 +3,5 @@
 local vimrc = vim.fn.stdpath("config") .. "/vimrc-common.vim"
 vim.cmd.source(vimrc)
 
-require "user.mappings"
+require "user.keymaps"
+require "user.plugins"
