@@ -17,10 +17,23 @@ vim.opt.rtp:prepend(lazypath)
 
 -- The plugins:
 local plugins = {
-  { "folke/tokyonight.nvim", lazy = true },
-  { "EdenEast/nightfox.nvim", lazy = true },
+ -- Popular color schemes:
+ { "martinsione/darkplus.nvim", lazy = true },
+ { "EdenEast/nightfox.nvim", lazy = true},
+ { "folke/tokyonight.nvim",
+   priority = 1000,
+   lazy = false,
+   config = function()
+      -- load the colorscheme here
+      vim.cmd([[colorscheme tokyonight]])
+    end,
+   },
 }
 
-
+local opts = {
+  ui = {
+     border = "rounded"
+  },
+}
 -- Perform the setup:
-require("lazy").setup(plugins)
+require("lazy").setup(plugins, opts)
