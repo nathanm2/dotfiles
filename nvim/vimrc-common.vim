@@ -76,3 +76,17 @@ nnoremap <S-h> :bprevious<CR>
 vnoremap < <gv
 vnoremap > >gv
 
+" Vimwiki Configuration =====================================================
+
+" Open the vimwiki index in split window
+noremap <Leader>wv :vsplit +VimwikiIndex<cr>
+noremap <Leader>wh :split +VimwikiIndex<cr>
+
+let wiki_shared = {}
+let wiki_shared.path = '~/Dropbox/vimwiki/'
+
+let wiki_local = {}
+let wiki_local.path = '~/vimwiki/'
+
+let g:vimwiki_list = [wiki_local, wiki_shared]
+

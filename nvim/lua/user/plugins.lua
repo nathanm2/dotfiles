@@ -1,6 +1,5 @@
 -- Lazy.nvim is a modern plugin manager for Neovim.
 
-
 -- Auto-install lazy.nvim:
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -27,7 +26,8 @@ local plugins = {
       -- load the colorscheme here
       vim.cmd([[colorscheme tokyonight]])
     end,
-   },
+  },
+  { "vimwiki/vimwiki", lazy = false },
 }
 
 local opts = {
