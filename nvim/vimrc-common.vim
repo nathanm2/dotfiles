@@ -40,8 +40,7 @@ set smartcase
 
 " Common Key Maps ===============================================
 
-" Make 'jk' an escape sequence:
-inoremap jk <esc>
+" -- Normal Mode --
 
 " A character to be pressed before some of the following mappings take effect:
 "
@@ -71,6 +70,18 @@ nnoremap <leader>e :Lex 30<cr>
 " Navigate between buffers a bit easier:
 nnoremap <S-l> :bnext<CR>
 nnoremap <S-h> :bprevious<CR>
+
+
+" -- Insert Mode --
+
+" Make 'jk' an escape sequence (convenient shortcut):
+inoremap jk <esc>
+
+" Make the current word upper-case:
+inoremap UU <esc>gUawea
+
+
+" -- Visual Mode --
 
 " Stay in indent mode
 vnoremap < <gv

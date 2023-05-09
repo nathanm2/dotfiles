@@ -124,7 +124,7 @@
 " Make the current word upper/lower case:
 :nnoremap <leader>U m`wbgUw``
 :nnoremap <leader>u m`wbguw``
-:inoremap UU <esc>m`wbgUw``a
+:inoremap UU <esc>gUawea
 
 " Make it easier to edit this file by defining two mappings:
 "   - One to edit the vimrc file.

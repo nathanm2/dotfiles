@@ -25,9 +25,14 @@ local plugins = {
    lazy = false,
    config = function()
       -- load the colorscheme here
-      vim.cmd([[colorscheme tokyonight]])
+      vim.cmd([[colorscheme tokyonight-moon]])
     end,
    },
+  
+  -- LSP Support
+  { "williamboman/mason.nvim",
+    build = ":MasonUpdate" -- :MasonUpdate updates registry contents
+  },
 }
 
 local opts = {
