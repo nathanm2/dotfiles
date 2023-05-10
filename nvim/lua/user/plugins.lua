@@ -17,7 +17,8 @@ vim.opt.rtp:prepend(lazypath)
 
 -- The plugins:
 local plugins = {
- -- Popular color schemes:
+
+ -- Color Schemes:
  { "martinsione/darkplus.nvim", lazy = true },
  { "EdenEast/nightfox.nvim", lazy = true},
  { "folke/tokyonight.nvim",
@@ -29,10 +30,18 @@ local plugins = {
     end,
    },
   
-  -- LSP Support
+  -- LSP Plugins:
+
+  -- Installs and manages LSP servers, debuggers, linters, etc.
   { "williamboman/mason.nvim",
     build = ":MasonUpdate" -- :MasonUpdate updates registry contents
   },
+
+  -- Bridges the `mason.nvim` with the `lspconfig` plugin.
+  { "williamboman/mason-lspconfig.nvim" },
+
+  -- Configs for the LSP client.
+  { "neovim/nvim-lspconfig" },
 }
 
 local opts = {

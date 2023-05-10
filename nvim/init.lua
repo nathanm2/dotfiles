@@ -5,5 +5,4 @@ vim.cmd.source(vimrc)
 
 require "user.keymaps"
 require "user.plugins"
-
-require("mason").setup()
+require "user.lsp"
