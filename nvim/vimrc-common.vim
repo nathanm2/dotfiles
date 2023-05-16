@@ -44,7 +44,7 @@ set smartcase
 
 " A character to be pressed before some of the following mappings take effect:
 "
-" To use the SPACEBAR as the leader key you should first remove the existing
+" To use the SPACEBAR as the leader key you need to first remove the existing
 " mapping for SPACE which defaults to moving forward a single key.
 nnoremap <SPACE> <Nop>
 let mapleader = " "
@@ -55,7 +55,10 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 nnoremap <c-h> <c-w><c-h>
 
-" Resize with arrows:
+" Resize with arrows
+"
+" NOTE: This feels natural for the top-left window, but a bit surprising when dealing with windows
+" on the bottom or the right.
 nnoremap <c-up> :resize -2<CR>
 nnoremap <c-down> :resize +2<CR>
 nnoremap <c-left> :vertical resize -2<CR>
@@ -65,12 +68,11 @@ nnoremap <c-right> :vertical resize +2<CR>
 nnoremap <leader>c :nohlsearch<cr>
 
 " Easily display the file explorer:
-nnoremap <leader>e :Lex 30<cr>
+nnoremap <leader>q :Lex 30<cr>
 
 " Navigate between buffers a bit easier:
-nnoremap <S-l> :bnext<CR>
-nnoremap <S-h> :bprevious<CR>
-
+nnoremap [b :bnext<CR>
+nnoremap ]b :bprevious<CR>
 
 " -- Insert Mode --
 
