@@ -104,7 +104,7 @@
 :set termguicolors
 
 " Make tab completion follow bash shell conventions:
-:set wildmode=longest,list
+:set wildmode=longest:full,full
 
 " Enable syntax highlighting.
 "    Note: On debian systems this is automatically set for you in
@@ -113,17 +113,13 @@
 "    Note: Setting syntax on will also automatically set filetype on.
 :syntax on
 
-" Copy, Cut, and Paste to the CLIPBOARD buffer (+)
-:noremap <F1> "+y
-:noremap <F2> "+d
-:noremap <F3> "+p
+" Change VIM to use the CLIPBOARD buffer instead of its default UNNAMED buffer:
+set clipboard=unnamedplus
 
 " A character to be pressed before some of the following mappings take effect:
 :let mapleader = "-"
 
 " Make the current word upper/lower case:
-:nnoremap <leader>U m`wbgUw``
-:nnoremap <leader>u m`wbguw``
 :inoremap UU <esc>gUawea
 
 " Make it easier to edit this file by defining two mappings:

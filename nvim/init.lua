@@ -1,9 +1,5 @@
 -- Neovim Configuration
 
----- Organization ----
-
--- It's easier if everything is in a single 
-
 -- Source our common vim/nvim config.
 --
 -- Stuff that is common between vim/nvim should go into this file.
@@ -30,7 +26,20 @@ keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
 
+----- Neovide -----
+
+-- Set the GUI font:
+vim.opt.guifont = "DejaVuSansMono Nerd Font Mono:h11"
+
 ----- Plugins -----
 
 require "user.plugins"
-require "user.lsp"
+
+-- Force the "signcolumn" to stay open.
+--
+-- Otherwise it causes the buffer to shift to the right when we're editing.
+vim.opt.signcolumn = "yes"
+
+local lspconfig = require("lspconfig")
+lspconfig.rust_analyzer.setup {}
+lspconfig.pylsp.setup{}

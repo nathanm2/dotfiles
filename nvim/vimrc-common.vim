@@ -37,6 +37,8 @@ set ignorecase
 " case character appears in the search.
 set smartcase
 
+" Show both the current line number and relative line numbers.
+set number relativenumber
 
 " Common Key Maps ===============================================
 

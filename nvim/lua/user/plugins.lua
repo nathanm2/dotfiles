@@ -33,7 +33,7 @@ local plugins = {
   { "EdenEast/nightfox.nvim", -- carbonfox
     priority = 1000,
     lazy = false,
- --   opts = carbonfox_opts,
+    opts = carbonfox_opts,
     config = function(plugin, opts)
       require("nightfox").setup(opts)
       -- load the colorscheme here
@@ -43,16 +43,18 @@ local plugins = {
   { "rebelot/kanagawa.nvim", lazy = true}, -- kanagawa-lotus
   { "folke/tokyonight.nvim", lazy = true},
   { "catppuccin/nvim", lazy = true}, -- catppuccin
+  { "morhetz/gruvbox"},
   
   -- LSP Plugins:
 
   -- Installs and manages LSP servers, debuggers, linters, etc.
-  { "williamboman/mason.nvim",
+  --[[{ "williamboman/mason.nvim",
     build = ":MasonUpdate" -- :MasonUpdate updates registry contents
   },
+  --]]
 
   -- Bridges the `mason.nvim` with the `lspconfig` plugin.
-  { "williamboman/mason-lspconfig.nvim" },
+  -- { "williamboman/mason-lspconfig.nvim" },
 
   -- Configs for the LSP client.
   { "neovim/nvim-lspconfig" },
