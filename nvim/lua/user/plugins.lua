@@ -16,14 +16,14 @@ vim.opt.rtp:prepend(lazypath)
 
 -- carbonfox tweaks
 local carbonfox_opts = {
-  specs = {
+  groups = {
     carbonfox = {
-      syntax = {
-        comment = "#6A9955",
-        string = "#CE9178"
-      }
+      Comment = { fg = "#6A9955" },
+      String = { fg = "#CE9178" },
+      StatusLine = { fg = "#E0E0E0", bg = "#37373D" },
+      StatusLineNC = { bg = "#252526" },
     }
-  }
+  },
 }
   
 -- The plugins:

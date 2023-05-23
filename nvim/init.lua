@@ -17,7 +17,6 @@ keymap("n", "<Leader>en", ":edit $MYVIMRC<CR>", term_opts)
 keymap("n", "<Leader>ev", string.format(":edit %s<CR>", vimrc), term_opts)
 keymap("n", "<Leader>ep", string.format(":edit %s<CR>",
        config_dir .. "/lua/user/plugins.lua"), term_opts)
-
 -- Terminal --
 -- Better terminal navigation
 keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
