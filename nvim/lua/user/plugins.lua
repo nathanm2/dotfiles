@@ -14,7 +14,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- carbonfox tweaks
+-- Carbonfox (color scheme) tweaks:
 local carbonfox_opts = {
   groups = {
     carbonfox = {
@@ -29,7 +29,7 @@ local carbonfox_opts = {
 -- The plugins:
 local plugins = {
 
-  -- Popular color schemes:
+  -- Color schemes --
   { "EdenEast/nightfox.nvim", -- carbonfox
     priority = 1000,
     lazy = false,
@@ -42,22 +42,14 @@ local plugins = {
   },
   { "rebelot/kanagawa.nvim", lazy = true}, -- kanagawa-lotus
   { "folke/tokyonight.nvim", lazy = true},
-  { "catppuccin/nvim", lazy = true}, -- catppuccin
+  { "catppuccin/nvim", lazy = true}, -- catppuccin-mocha
   { "morhetz/gruvbox"},
-  
-  -- LSP Plugins:
 
-  -- Installs and manages LSP servers, debuggers, linters, etc.
-  --[[{ "williamboman/mason.nvim",
-    build = ":MasonUpdate" -- :MasonUpdate updates registry contents
-  },
-  --]]
-
-  -- Bridges the `mason.nvim` with the `lspconfig` plugin.
-  -- { "williamboman/mason-lspconfig.nvim" },
-
-  -- Configs for the LSP client.
+  -- LSP configuration
   { "neovim/nvim-lspconfig" },
+
+  -- Telescope
+  { "nvim-telescope/telescope.nvim", version = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" }}
 }
 
 -- Options to Lazy:
