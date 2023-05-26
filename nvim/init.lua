@@ -2,10 +2,11 @@
 
 -- Source our common vim/nvim config.
 --
--- Stuff that is common between vim/nvim should go into this file.
+-- Stuff that is common between vim/nvim should go in this file.
 local config_dir = vim.fn.stdpath("config")
 local vimrc = config_dir .. "/vimrc-common.vim"
 vim.cmd.source(vimrc)
+
 
 ----- Key Maps ----- 
 
@@ -25,20 +26,11 @@ keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
 
------ Neovide -----
+-- Neovide --
 
 -- Set the GUI font:
 vim.opt.guifont = "DejaVuSansMono Nerd Font Mono:h11"
 
------ Plugins -----
 
-require "user.plugins"
-
--- Force the "signcolumn" to stay open.
---
--- Otherwise it causes the buffer to shift to the right when we're editing.
-vim.opt.signcolumn = "yes"
-
-local lspconfig = require("lspconfig")
-lspconfig.rust_analyzer.setup {}
-lspconfig.pylsp.setup{}
+-- Plugins --
+require("user.lazy")

@@ -72,7 +72,7 @@ nnoremap <leader>c :nohlsearch<cr>
 " Easily display the file explorer:
 nnoremap <leader>q :Lex 30<cr>
 
-" Navigate between buffers a bit easier:
+" Navigate between buffers:
 nnoremap [b :bnext<CR>
 nnoremap ]b :bprevious<CR>
 
