@@ -1,5 +1,4 @@
-
-function lspconfig(plugin, opts)
+function config(plugin, opts)
   -- Force the "signcolumn" to stay open.
   --
   -- Otherwise it causes the buffer to shift to the right when we're editing.
@@ -13,6 +12,6 @@ end
 return {
   { "neovim/nvim-lspconfig",
     lazy=false,
-    config = lspconfig,
+    config = config,
   }
 }
