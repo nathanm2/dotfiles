@@ -3,8 +3,15 @@
 " Common vim options used in both vim AND neovim.
 "
 
+" Debug Tips ==========================================================
+" 
+" Which script changed an option setting:
+"   :verbose set textwidth?
+
 " Enable 24-bit color support in the terminal:
 set termguicolors
+
+" Common Editor Behavior ==============================================
 
 " Previously, I used the following mappings to copy, cut, and paste
 " to the CLIPBOARD buffer (+):
@@ -39,6 +46,15 @@ set smartcase
 
 " Show both the current line number and relative line numbers.
 set number relativenumber
+
+
+"function! WindowWidth()
+"    if &textwidth != 0
+"        let &l:winwidth=&textwidth + 5
+"    endif
+"endfunction
+
+"autocmd WinEnter * :call WindowWidth()
 
 " Common Key Maps ===============================================
 
