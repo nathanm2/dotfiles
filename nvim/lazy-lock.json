@@ -1,11 +1,12 @@
 {
   "gruvbox": { "branch": "master", "commit": "bf2885a95efdad7bd5e4794dd0213917770d79b7" },
-  "kanagawa.nvim": { "branch": "master", "commit": "42c33239b0460cbbcdb67bc9c7f0c420a95208e6" },
+  "kanagawa.nvim": { "branch": "master", "commit": "14a7524a8b259296713d4d77ef3c7f4dec501269" },
   "lazy.nvim": { "branch": "main", "commit": "67ae8bbbe3985e380b98abeaf6c567c422b29746" },
   "nightfox.nvim": { "branch": "main", "commit": "77aa7458d2b725c2d9ff55a18befe1b891ac473e" },
-  "nvim": { "branch": "main", "commit": "cc517bdcb66a0f8dee90bab10ccdd651fa967bbe" },
-  "nvim-lspconfig": { "branch": "master", "commit": "570aae82f8c6bc15fb6e559ed7d5a3fd85374329" },
+  "nvim": { "branch": "main", "commit": "57b421ee5f7380f816791fa451e86f213b625ece" },
+  "nvim-lspconfig": { "branch": "master", "commit": "1c0644c10638c7bb165bb614b1715107ede07542" },
   "plenary.nvim": { "branch": "master", "commit": "52544825d6b8be677eb395983515ad5e30ae1f2e" },
   "telescope.nvim": { "branch": "master", "commit": "c1a2af0af69e80e14e6b226d3957a064cd080805" },
-  "tokyonight.nvim": { "branch": "main", "commit": "e59580ae7c5656404653d25ede13f208a243b8eb" }
+  "tokyonight.nvim": { "branch": "main", "commit": "90b711c052bb3cd9692922e16bcf3861344ecf75" },
+  "vscode.nvim": { "branch": "main", "commit": "dc5f37603ada51db13bc4009cbee628c5857a274" }
 }

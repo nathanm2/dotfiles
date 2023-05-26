@@ -44,7 +44,10 @@ set number relativenumber
 
 " -- Normal Mode --
 
-" A character to be pressed before some of the following mappings take effect:
+" The leader key.
+"
+" Using this for key maps ensures the map won't collide with some
+" existing mapping.
 "
 " To use the SPACEBAR as the leader key you need to first remove the existing
 " mapping for SPACE which defaults to moving forward a single key.
@@ -57,6 +60,26 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 nnoremap <c-h> <c-w><c-h>
 
+" Better movement
+"
+" gj/gk move to the next display line, which when wrapping is enabled, may not
+" correpond to the line number.
+nnoremap <silent><expr> j v:count == 0 ? "gj" : "j"
+nnoremap <silent><expr> k v:count == 0 ? "gk" : "k"
+
+" Toggle between absolute/relative/none line numbering
+nnoremap <silent> <leader>l :call ToggleLineNumberType()<cr>
+
+function! ToggleLineNumberType()
+    if &relativenumber && &number
+        setlocal norelativenumber
+    elseif &number
+        setlocal nonumber
+    else
+        setlocal number relativenumber
+    endif
+endfunction
+
 " Resize with arrows
 "
 " NOTE: This feels natural for the top-left window, but a bit surprising when dealing with windows
@@ -67,7 +90,8 @@ nnoremap <c-left> :vertical resize -2<CR>
 nnoremap <c-right> :vertical resize +2<CR>
 
 " Easily clear the last search result:
-nnoremap <leader>c :nohlsearch<cr>
+nnoremap <esc> <cmd>noh<cr><esc>
+inoremap <esc> <cmd>noh<cr><esc>
 
 " Easily display the file explorer:
 nnoremap <leader>q :Lex 30<cr>

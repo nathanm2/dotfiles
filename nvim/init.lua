@@ -27,7 +27,7 @@ keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
 -- Set the GUI font:
 vim.opt.guifont = "DejaVuSansMono Nerd Font Mono:h11"
-
+-- vim.opt.guifont = "DroidSansM Nerd Font Mono:h11"
 
 -- Plugins --
 require("user.lazy")

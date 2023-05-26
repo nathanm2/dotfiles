@@ -26,4 +26,5 @@ return {
   { "folke/tokyonight.nvim", lazy = true},
   { "catppuccin/nvim", lazy = true}, -- catppuccin-mocha
   { "morhetz/gruvbox"},
+  { "Mofiqul/vscode.nvim", lazy = false },
 }
