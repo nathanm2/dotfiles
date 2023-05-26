@@ -2,22 +2,19 @@
 
 -- Source our common vim/nvim config.
 --
--- Stuff that is common between vim/nvim should go in this file.
+-- For config options that you'd like to keep common between vim/nvim:
 local config_dir = vim.fn.stdpath("config")
 local vimrc = config_dir .. "/vimrc-common.vim"
 vim.cmd.source(vimrc)
 
-
 ----- Key Maps ----- 
 
+-- Make it easier to edit the keymappings:
 local term_opts = { silent = true }
 local keymap = vim.api.nvim_set_keymap
-
--- Make it easier to edit the vim config files:
 keymap("n", "<Leader>en", ":edit $MYVIMRC<CR>", term_opts)
 keymap("n", "<Leader>ev", string.format(":edit %s<CR>", vimrc), term_opts)
-keymap("n", "<Leader>ep", string.format(":edit %s<CR>",
-       config_dir .. "/lua/user/plugins.lua"), term_opts)
+
 -- Terminal --
 -- Better terminal navigation
 keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
