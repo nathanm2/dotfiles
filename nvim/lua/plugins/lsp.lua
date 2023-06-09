@@ -7,6 +7,7 @@ function config(plugin, opts)
   local lspconfig = require("lspconfig")
   lspconfig.rust_analyzer.setup {}
   lspconfig.pylsp.setup{}
+  lspconfig.clangd.setup{}
 end
 
 return {
