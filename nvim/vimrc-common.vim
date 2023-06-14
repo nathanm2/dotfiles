@@ -113,8 +113,18 @@ inoremap <esc> <cmd>noh<cr><esc>
 nnoremap <leader>q :Lex 30<cr>
 
 " Navigate between buffers:
-nnoremap [b :bnext<CR>
-nnoremap ]b :bprevious<CR>
+nnoremap [b <cmd>exe v:count .. "bprevious"<cr>
+nnoremap <s-h> :bprevious<cr>
+nnoremap ]b <cmd>exe v:count .. "bnext"<cr>
+nnoremap <s-l> :bnext<cr>
+nnoremap <leader>bb :e #<cr>
+
+" Navigate the quickfix list
+nnoremap [q <cmd>exe v:count .. "cprev"<cr>
+nnoremap ]q <cmd>exe v:count .. "cnext"<cr>
+nnoremap [Q <cmd>cfirst<cr>
+nnoremap ]Q <cmd>clast<cr>
+
 
 " -- Insert Mode --
 
