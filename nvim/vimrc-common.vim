@@ -71,10 +71,10 @@ nnoremap <SPACE> <Nop>
 let mapleader = " "
 
 " Easier window movement mappings:
-nnoremap <c-j> <c-w><c-j>
-nnoremap <c-k> <c-w><c-k>
-nnoremap <c-l> <c-w><c-l>
-nnoremap <c-h> <c-w><c-h>
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-l> <c-w>l
+nnoremap <c-h> <c-w>h
 
 " Better movement
 "
@@ -105,12 +105,12 @@ nnoremap <c-down> :resize +2<CR>
 nnoremap <c-left> :vertical resize -2<CR>
 nnoremap <c-right> :vertical resize +2<CR>
 
-" Easily clear the last search result:
+" Easily clear the last search result by pressing escape.
 nnoremap <esc> <cmd>noh<cr><esc>
 inoremap <esc> <cmd>noh<cr><esc>
 
-" Easily display the file explorer:
-nnoremap <leader>q :Lex 30<cr>
+" Easily toggle the NetRW window
+nnoremap <leader>e :Lex 30<cr>
 
 " Navigate between buffers:
 nnoremap [b <cmd>exe v:count .. "bprevious"<cr>

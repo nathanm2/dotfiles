@@ -12,8 +12,8 @@ vim.cmd.source(vimrc)
 -- Make it easier to edit the keymappings:
 local term_opts = { silent = true }
 local keymap = vim.api.nvim_set_keymap
-keymap("n", "<Leader>en", ":edit $MYVIMRC<CR>", term_opts)
-keymap("n", "<Leader>ev", string.format(":edit %s<CR>", vimrc), term_opts)
+keymap("n", "<Leader>on", ":edit $MYVIMRC<CR>", term_opts)
+keymap("n", "<Leader>ov", string.format(":edit %s<CR>", vimrc), term_opts)
 
 -- Terminal --
 -- Better terminal navigation
@@ -21,7 +21,6 @@ keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
 keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
 keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
-
 
 -- Neovide --
 

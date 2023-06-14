@@ -26,6 +26,7 @@ end
 return {
   -- Color schemes --
   { "EdenEast/nightfox.nvim", -- carbonfox
+    lazy = true,
     opts = carbonfox_opts,
     -- config = carbonfox_config
   },
