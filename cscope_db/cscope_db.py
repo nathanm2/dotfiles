@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 """
 A utility for managing Cscope databases.
@@ -9,7 +9,7 @@ import sys
 import os
 import stat
 import inspect
-import ConfigParser
+from configparser import RawConfigParser
 import json
 import errno
 import datetime
@@ -92,7 +92,7 @@ dbfile = {dbfile}
 runname = cs_runner.sh
 """.format(generators=os.path.join(script_dir(), "generators"),
         dbfile=os.path.join(configdir, "db.json"))
-    with open(configname, 'wb') as f:
+    with open(configname, 'w', encoding='utf-8') as f:
         f.write(config)
 
 
@@ -115,7 +115,7 @@ def write_db(config, db):
 
     # Write to a temporary file and then switch things atomically:
     tmp = os.path.join(dbdir, '.'+os.path.basename(dbname))
-    with open(tmp, 'wb') as tmpfile:
+    with open(tmp, 'w', encoding='utf-8') as tmpfile:
         json.dump(db, tmpfile, indent=2)
         tmpfile.flush()
         os.fsync(tmpfile.fileno())
@@ -186,7 +186,7 @@ def list_op(config, args):
     gens = get_generators(config)
     if args.generator:
         _gens = {}
-        for k,v in gens.iteritems():
+        for k,v in gens.items():
             if args.generator == k:
                 _gens[k] = v
         gens = _gens
@@ -195,7 +195,7 @@ def list_op(config, args):
 
     db = read_db(config)
     _db = {}
-    for k,v in db.iteritems():
+    for k,v in db.items():
         if v["generator"] in gens.keys():
             _db[k] = v
     db = _db
@@ -224,7 +224,7 @@ def build_generator_script(genpath, name, root, output):
     script = os.path.join(output, name)
 
     ensure_dir(output)
-    with open(script, 'wb') as sf:
+    with open(script, 'w', encoding='utf-8') as sf:
         sf.write("#!/bin/sh\n")
         sf.write("{0} {1} {2}".format(genpath, root, output))
     os.chmod(script, os.stat(script).st_mode | stat.S_IEXEC)
@@ -240,15 +240,19 @@ def init_op(config, args):
     # Cleanup any old projects with the same output directory.
     # Check for project name conflicts at the same time.
     output = os.path.normpath(args.output)
+    old_projects = []
     for project in db.values():
         projectname = project['name']
         if output == project['output']:
             status("removing old generator files.")
             rm_project_files(project)
-            del db[projectname]
+            old_projects.append(projectname)
         elif args.name == projectname:
             msg = "Project name already in use: {0}".format(projectname)
             raise ProjectError(msg)
+
+    for projectname in old_projects:
+        del db[projectname]
 
     # Build a shell script for invoking the generator:
     status("building generator")
@@ -334,7 +338,7 @@ def main():
         create_config(configname)
 
     # Parse the config file:
-    config = ConfigParser.RawConfigParser()
+    config = RawConfigParser()
     config.read(configname)
 
     default_gen = config.get("config", "default")
