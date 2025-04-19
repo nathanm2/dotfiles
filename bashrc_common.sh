@@ -3,6 +3,8 @@
 # Common Aliases
 #
 alias g=gvim
+alias n="nvim-qt --geometry 950x850"
+alias h="gnome-terminal --geometry 107x46 -- hx"
 
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -24,6 +26,13 @@ if [[ ":$PATH:" != *":${cscope_db_path}:"* ]]; then
 fi
 source ${DIR}/cscope_db/cscope_db_completion
 source ${DIR}/cscope_db/cscope_db_bash.sh
+
+#
+# cdargs is a CLI oriented directory bookmark manager
+#
+function cv() {
+    cdargs "$1" && cd $(cat "$HOME/.cdargsresult")
+}
 
 #
 # Enable the git prompt

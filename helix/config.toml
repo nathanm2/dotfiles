@@ -1,0 +1,35 @@
+
+#theme = "material_deep_ocean"
+theme = "catppuccin_mocha"
+
+[editor]
+line-number = "relative"
+bufferline = "multiple"
+
+[editor.indent-guides]
+render = true
+character = "┆"
+
+
+[editor.soft-wrap]
+enable = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+
+[keys.normal."space"]
+q = ":q"
+e = ":reflow"
+
+[keys.insert]
+j = { k = "normal_mode"}
+
+[keys.normal]
+C-h = "jump_view_left"
+C-l = "jump_view_right"
+C-j = "jump_view_down"
+C-k = "jump_view_up"
+
